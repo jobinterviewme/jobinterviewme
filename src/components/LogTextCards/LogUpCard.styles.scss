@@ -1,0 +1,49 @@
+.arrow {
+    margin: 0 2% 0 0;
+    transform: translate3d(0, 25%, 0);
+}
+
+.makeStyles-underline-91::after{
+    border-color: #ee8572 !important;
+}
+
+h4{
+    font-family: "Gill Sans Nova Light" !important;
+    font-weight: 700 !important;
+    font-size: 16px !important;
+    text-transform: uppercase;
+    color: #555 !important;
+}
+
+#question{
+    color: #63b7af;
+}
+
+ul{
+    font-family: "Gill Sans Nova Light" !important;
+    font-size: 18px;
+}
+
+#margen{
+    margin-top: 30px;
+}
+
+.contenedorLogin{
+    padding-top: 10vh !important;
+    padding-bottom: 8vh !important;
+}
+
+.blanco{
+    color: white !important;
+}
+
+.flotar{
+    
+position:absolute; 
+z-index:3;
+top: 5px;}
+
+.abajo{
+    z-index: 10;
+    position: relative;
+}
