@@ -5,11 +5,11 @@ import { makeStyles, Icon} from '@material-ui/core';
 import styles from "../../assets/jss/material-kit-react/tooltipsStyle.js";
 import './CardCitas.style.scss';
 import Button from "components/CustomButtons/Button.js";
-import DialogCard from 'components/DialogCard/DialogCard.component.jsx';
+import DialogCardCliente from 'components/DialogCard/DialogCardCliente.component.jsx';
 
 const useStyles = makeStyles(styles);
 
-const CardCitas = (props) => {
+const CardCitasCliente = (props) => {
 
 const {nombre, toolTipsText, confirmada, fecha, lugar}= props;
 const cita=props.cita;
@@ -24,12 +24,10 @@ if(tipo!=="deshabilitado"){
 if(confirmada === "true"   ){
     tipo = "aceptado";
 }else{
-    if(confirmada === "false" && (fecha-today<(2*86400000))  ){
+    if(confirmada === "false" ){
         
-       tipo = "warning"}
-        else{
-            tipo = "pendiente";
-        }
+       tipo = "pendiente"}
+        
 }}
 
  const ConfirmarCita=(e)=>{
@@ -47,16 +45,13 @@ if(confirmada === "true"   ){
             >
 
             {nombre}<br/>
-
-            {tipo!=="deshabilitado"?
-                tipo==="warning"?(<span id="alerta">¡Cita próxima sin confirmación!</span>)
-            :(<></>):(<></>)}
-
+            {tipo!=="deshabilitado"?<span id="alerta">{cita.confirmada==="true"?"Confirmada":"Pendiente de confirmación  "}
+            </span>:<></>}
             </Button>
 
-            <DialogCard cita={cita} setReload={(value)=>props.setReload(value)} modal1Visible={Modal1Visible} setModal1Visible={(value)=>setModal1Visible(value)}/>
+            <DialogCardCliente cita={cita} setReload={(value)=>props.setReload(value)} modal1Visible={Modal1Visible} setModal1Visible={(value)=>setModal1Visible(value)}/>
         </>
     );
 }
 
-export default CardCitas
+export default CardCitasCliente

@@ -7,35 +7,51 @@ import canalesJSON from "../../assets/json/canales.json"
 import './Oferta.style.scss';
 import Calendario from '../../components/Calendario/Calendario.component';
 
+import { connect } from "react-redux";
+import * as authAction from "../../store/actions/authAction"
+
 
 
 const Oferta1 = (props) => {
     //console.log(props.valores)
 
-    const [tipoPreparación, settipoPreparación]=useState(props.valores.tipoPreparación)
-    const [duracionX, setDuracionX]=useState(props.valores.duracion)
-    const [agenda, setagenda]=useState(props.valores.agenda)
-    const [tarifa, settarifa]=useState(props.valores.tarifa)
-    const [canales, setcanales]=useState(props.valores.canales)
+    const [tipopreparacion, settipopreparacion]=useState(props.global.usuario.tipopreparacion)
+    const [duracionX, setDuracionX]=useState(props.global.usuario.duracion)
+    const [agenda, setagenda]=useState(props.global.usuario.agenda)
+    const [tarifa, settarifa]=useState(props.global.usuario.tarifa)
+    const [canales, setcanales]=useState(props.global.usuario.canales?.split(","))
     const [calendario, setCalendario] = useState([]);
-    
-    const onFinish = values => {
+    const [fechasnulas, setFechasnulas] = useState(props.global.usuario.fechasnulas?.split(","))
+     
+    const onFinish = (values) => {
         let valores={}
-        valores.tipoPreparacion=tipoPreparación
-        valores.duracion=duracionX
-        valores.canales=canales
-        valores.tarifa=tarifa
-        valores.agenda=agenda
-        valores.calendario=llenarCal();
-
-        console.log(valores)
-      console.log('Received values of form:', valores);
-      props.segundosValores(valores)
+        if (values.tipoPreparacion === undefined) {
+            values.tipoPreparacion = tipopreparacion
+        }
+        if (values.duracion === undefined) {
+            values.duracion = duracionX
+        }
+        if (values.canales === undefined) {
+            values.canales = canales
+        }
+        if (values.tarifa === undefined) {
+            values.tarifa = 11
+        }
+        if (values.agenda === undefined) {
+            values.agenda = agenda
+        }
+        if (values.calendario === undefined) {
+            values.calendario = llenarCal();
+        }
+       
+        console.log(values)
+      console.log('Received values of form:', values);
+      props.segundosValores(values)
       
     };
     const initialValue={
         duracion:duracionX,
-        tipoPreparación:tipoPreparación,
+        tipopreparacion:tipopreparacion,
         tarifa:tarifa,
         canales:canales,
         agenda:agenda
@@ -43,7 +59,7 @@ const Oferta1 = (props) => {
     const onAbort=()=>{
         //console.log(agenda)
         let values={}
-        values.tipoPreparación=tipoPreparación
+        values.tipopreparacion=tipopreparacion
         values.duracion=duracionX
         values.canales=canales
         values.tarifa=tarifa
@@ -62,8 +78,7 @@ const Oferta1 = (props) => {
     })
 
     function handleChange(value) {
-        console.log(`selected ${value}`);
-        setcanales(value)
+       setcanales(value)
     }
 
     function onChangeDuracion(value) {
@@ -71,11 +86,7 @@ const Oferta1 = (props) => {
     }
 
     const diass = ["lunes","martes","miércoles","jueves","viernes","sábado","domingo"];
-    let diasTemp = diass;
 
-    /*const onSelectDay = (option, fieldKey) => {
-        console.log(option, fieldKey);
-    }*/
     const array1 =diass;
     const array2 =[];
 
@@ -121,13 +132,13 @@ const Oferta1 = (props) => {
                     <h4>Definición del servicio</h4>
                     <Form.Item
                         label="Tipo de preparación"
-                        name="tipoPreparación"
+                        name="tipopreparacion"
                         rules={[{
-                            required: true,
-                            message: 'Please input your Tipo de preparación!',
+                            required: tipopreparacion === "" ? true : false,
+                            message: 'Por favor escriba el tipo de preparación que va a ofertar!',
                         },]}
                     >
-                        <Input defaultValue={tipoPreparación} onChange={(e)=>settipoPreparación(e.target.value)} placeholder="Tipo de preparación"/>
+                        <Input defaultValue={tipopreparacion} onChange={(e)=>settipopreparacion(e.target.value)} placeholder="Tipo de preparación"/>
                     </Form.Item>
 
                     <Form.Item
@@ -135,7 +146,8 @@ const Oferta1 = (props) => {
                         label="Duración"
                         rules={[
                         {
-                            required: true,
+                            required: duracionX === "" ? true : false,
+                            message: 'Por favor seleccione una duración',
                         },
                         ]}
                     >
@@ -168,7 +180,8 @@ const Oferta1 = (props) => {
                         label="Canales"
                         rules={[
                         {
-                            required: true,
+                            required: canales === "" ? true : false,
+                            message: 'Por favor seleccione al menos un canal',
                         },
                         ]}
                     >
@@ -182,7 +195,8 @@ const Oferta1 = (props) => {
                         label="Tarifa"
                         rules={[
                         {
-                            required: true,
+                            required: tarifa === "" ? true : false,
+                            message: 'Por favor seleccione al menos una tarifa',
                         },
                         ]}
                     >
@@ -199,7 +213,7 @@ const Oferta1 = (props) => {
                 <Col span={12} className= "OfertaCol2">
                 <h4>Agenda</h4>
                 <div className="ant-col ant-form-item-label">
-                    <label htmlFor="dynamic_form_nest_item_tipoPreparación" className="ant-form-item-required" title="Adiciona días de la semana disponibles">
+                    <label htmlFor="dynamic_form_nest_item_tipopreparacion" className="ant-form-item-required" title="Adiciona días de la semana disponibles">
                         Selecciona el horario disponible para que puedan contratar tus servicios:
                     </label>
                 </div>
@@ -207,44 +221,16 @@ const Oferta1 = (props) => {
                     <Form.List name="agenda" >
                     {(fields, { add, remove }) => (
                         <>
+                        
                         {fields.map(({ key, name, fieldKey, ...restField }) => (
                             <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
                                 <div className="p-grid">
                                     <div className="p-col-fixed" style={{ width: '100px'}} >                                        
-                                        <label htmlFor="dynamic_form_nest_item_tipoPreparación" className="ant-form-item-required" title="Adiciona días de la semana disponibles">
+                                        <label htmlFor="dynamic_form_nest_item_tipopreparacion" className="ant-form-item-required" title="Adiciona días de la semana disponibles">
                                             {diass[name]}
                                         </label>
                                     </div>
-                           {/*
-                            <Form.Item
-                                {...restField}
-                                name={[name, 'dia']}
-                                fieldKey={[fieldKey, 'dia']}
-                                rules={[
-                                    
-                                    { required: true, message: 'Introduzca el día' }]}
-                            >
-                                
-                            <Select
-                                showSearch
-                                style={{ width: 200 }}
-                                placeholder="Selecciona u día"
-                                optionFilterProp="children"
-                                //onSelect={(e,fieldKey)=>onSelectDay(e,fieldKey)}
-                                onChange={(name,fieldKey)=>onDeselectDay(name,fieldKey)}
-                                
-
-                                filterOption={(input, option) =>
-                                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                                }
-                            >
-                                 {diasTemp.map((dia,index) => (
-                                    <Option key={index+key} value={dia}>{dia}</Option>
-                                ))}
-                                
-                            </Select>
-                            </Form.Item>*/
-                                 }
+                           
                             <div className="p-col-7">
                                 <Form.Item
                                 {...restField}
@@ -255,9 +241,12 @@ const Oferta1 = (props) => {
                             <TimePicker.RangePicker minuteStep={5} defaultValue={moment('12:08', format)} format={format} />
                             
                             </Form.Item>
-                                 </div><div className="p-col-1">
+                                 </div>
+                                 <div className="p-col-1">
                             <MinusCircleOutlined onClick={() => remove(name)} />
                             </div>
+
+
                             </div>
                             </Space>
                         ))}
@@ -273,7 +262,7 @@ const Oferta1 = (props) => {
 
 
                     <div className="p-col-10">
-                        <label htmlFor="dynamic_form_nest_item_tipoPreparación" title="Tipo de preparación">
+                        <label htmlFor="dynamic_form_nest_item_tipopreparacion" title="Tipo de preparación">
                         No te preocupes si te surgen planes, dispones de un calendario donde especificar los días que no vas a estar disponible.
                         <Calendario id="idCal" calendario={calendario} setCalendario={(value)=>setCalendario(value)}/>        
 
@@ -308,4 +297,8 @@ const Oferta1 = (props) => {
     );
   };
 
-export default Oferta1;
+  const mapStateToProps = (rootReducer) => {
+    return { global: rootReducer.auth };
+};
+
+export default connect(mapStateToProps, authAction)(Oferta1);

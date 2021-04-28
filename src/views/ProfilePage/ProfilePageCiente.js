@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 
 //componentes
@@ -10,6 +10,8 @@ import HeaderLinks from "components/Header/HeaderLinks.js";
 import Parallax from "components/Parallax/Parallax.js";
 import Icono from '../../components/Icono/Icono.component';
 import Cargando from 'components/Cargando/Cargando.component'
+import Button from "components/CustomButtons/Button.js";
+
 
 //ANTD
 import { Table, Tag, Tooltip } from 'antd';
@@ -31,14 +33,17 @@ import AxiosConexionConfig from "conexion/AxiosConexionConfig";
 //redux
 import * as authAction from "../../store/actions/authAction"
 import { connect } from "react-redux";
-import { linkpreparadoredit } from "configuracion/constantes";
+import { linkContratarCita } from "configuracion/constantes";
+import LoginPopUp from "components/Header/Login/Login.component";
 
 
 const useStyles = makeStyles(styles);
 
-const ProfilePage = (props) => {
+const ProfilePageCliente = (props) => {
 
-  console.log(props);
+  const history = useHistory()
+
+
   const [date15, setDate15] = useState(null);
 
   const id = props.location.search.split("?")[1]
@@ -58,9 +63,13 @@ const ProfilePage = (props) => {
 
   const classes = useStyles();
   const { ...rest } = props;
-  const [usuario, setUsuario] = useState(props.global.usuario)
+  const [usuario, setUsuario] = useState("")
   const [usserName, setUsseName] = useState(props.global)
-  const [agenda, setAgenda] = useState([]);
+  const [agenda, setAgenda] = useState(null);
+  const [invday, setinvday] = useState([]);
+  const [invdate, setinvdate] = useState([]);
+
+
 
   const imageClasses = classNames(
     classes.imgRaised,
@@ -73,55 +82,72 @@ const ProfilePage = (props) => {
   }, []);
 
   async function RefreshUsuario() {
-    const url = urlProfesional + "/" + id + "/profesional-agenda";
+    const url1 = urlProfesional + "/" + id;
+    const url2 = urlProfesional + "/" + id + "/profesional-agenda";
     try {
-      const respuesta1 = await AxiosConexionConfig.get(url);
-      setAgenda(respuesta1.data);
-      //setUsuario(props.global.usuario)
-      setUsseName(props.global)
+      const respuesta1 = await AxiosConexionConfig.get(url1);
+
+      const respuesta2 = await AxiosConexionConfig.get(url2);
+      setAgenda(respuesta2.data);
+
+      //console.log(respuesta1.data)
+      setUsuario(respuesta1.data);
+      //console.log(respuesta2.data)
+      invalidDates(respuesta1.data);
+      invalidDays(respuesta2.data);
+      //setUsseName(props.global)
       //console.log(props.global)
     } catch (e) {
       console.log(e);
     }
   }
 
-  const invalidDates = () => {
-    const array = props.global.usuario.fechasnulas?.split(",");
+  const invalidDates = (user) => {
+    //console.log(usuario);
+
+    const array = user?.fechasnulas.split(",");
     const array2 = []
     array.map((a) => {
       array2.push(new Date(a));
     })
-    return array2;
+    setinvdate(array2);
   }
 
-  const invalidDays = () => {
-    const invday = [];
-    agenda.map((agd, idex) => {
-      if (agd.horainicio == null) {
+  const invalidDays = (agenda1) => {
+    let invday1 = [];
+    agenda1.map((agd, idex) => {
+      if (agd.horainicio === null) {
         switch (agd.diasemana) {
-          case "Lunes": invday.push(1);
+          case "Lunes": invday1.push(1);
             break;
-          case "Martes": invday.push(2);
+          case "Martes": invday1.push(2);
             break;
-          case "Miércoles": invday.push(3);
+          case "Miércoles": invday1.push(3);
             break;
-          case "Jueves": invday.push(4);
+          case "Jueves": invday1.push(4);
             break;
-          case "Viernes": invday.push(5);
+          case "Viernes": invday1.push(5);
             break;
-          case "Sábado": invday.push(6);
+          case "Sábado": invday1.push(6);
             break;
-          case "Domingo": invday.push(0);
-            console.log(invday);
-
+          case "Domingo": invday1.push(0);
             break;
         }
       }
     })
-
-    return invday;
+    setinvday(invday1);
   }
 
+  const [visible, setVisible] = useState(false);
+
+
+  const goToContratar = (id) => {
+    if (props.global.email === "") {
+      setVisible(true);
+    } else {
+      history.push(linkContratarCita + "?" + id)
+    }
+  }
 
   const columns1 = [
     {
@@ -170,11 +196,15 @@ const ProfilePage = (props) => {
     },
   ];
 
+
+
   const sectoresA = (atributo, index, clase) => {
     return (
       (index === 0) ? <div className={clase} key={index}>{atributo}</div> : <div className={clase} key={index}>{", " + atributo}</div>
     )
   }
+
+
 
   const header = () => {
     return (
@@ -198,8 +228,8 @@ const ProfilePage = (props) => {
         <div className={classes.container + " headerNameTitle"}>
           <GridContainer justify="flex-end">
 
-            <GridItem xs={12} sm={12} md={6}>
-              <h3 className={classes.title + " nameTitle"}>{usuario !== null ? usserName.nombre + " " + usserName.apellidos : ""}</h3>
+            <GridItem xs={12} sm={12} md={4}>
+              <h3 className={classes.title + " nameTitle"}>{usuario !== null ? usuario?.nombreperfil : ""}</h3>
             </GridItem>
 
             <GridItem xs={12} sm={12} md={2}>
@@ -212,7 +242,6 @@ const ProfilePage = (props) => {
   }
 
   const body = () => {
-    //console.log(usuario)
     return (
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div>
@@ -224,30 +253,28 @@ const ProfilePage = (props) => {
                 <div className={classes.profile}>
 
                   <div>
-                    <img src={usuario.imagen} alt={usuario.nombreperfil} className={imageClasses + " imagenProfile"} />
+                    <img src={usuario?.imagen} alt={usuario?.nombreperfil} className={imageClasses + " imagenProfile"} />
                   </div>
-
-                  <Link to={linkpreparadoredit}>
-                    <Tooltip title="Editar perfil">
-                      <i className="editarUsserIcon pi pi-user-edit p-mr-2"></i>
-                    </Tooltip>
-                  </Link>
 
                   <div className={classes.name}>
 
                     <div id="banderasList">
-                      {
-                        usuario.idiomas.split(",").map((idioma, index) => {
+                      {usuario.idioma == !null ?
+                        usuario?.idiomas.split(",").map((idioma, index) => {
                           return (
                             <Icono codigo={idioma} tipo="bandera" key={index} nombre={idioma} id={index} />
                           )
-                        })
+                        }) : <></>
                       }
                     </div>
 
                     <div className="precio">
-                      <span className="precioText">{usuario.tarifa + "€ / " + usuario.duracion + '’ entrevista'}</span>
+                      <span className="precioText">{usuario?.tarifa + "€ / " + usuario?.duracion + '’ entrevista'}</span>
                     </div>
+
+                    <Button className="contratar precio" simple color="primary" onClick={() => goToContratar(id)} size="lg">
+                      <span className="precioText">CONTRATAR</span>
+                    </Button>
 
                   </div>
                 </div>
@@ -256,38 +283,39 @@ const ProfilePage = (props) => {
               <GridItem xs={12} sm={12} md={8}><div className={classes.description}>
 
                 <div className="experiencia">
-                  <p> {usuario.annosexperiencia} años de experiencia en el(los) sector(es):
+                  <p> {usuario?.annosexperiencia} años de experiencia en el(los) sector(es):
                     <div className="sectores">
-                      {usuario.sectores.split(",").map((sector, index) => {
-                        return (
-                          sectoresA(sector, index, "sectores")
-                        )
-                      })}
+                      {usuario.sectores == !null ?
+                        usuario?.sectores.split(",").map((sector, index) => {
+                          return (
+                            sectoresA(sector, index, "sectores")
+                          )
+                        }) : <></>}
                     </div>
                   </p>
                 </div>
               </div>
 
                 <div className={classes.description + " wrap"}>
-                  <p>{usuario.experiencia}</p>
+                  <p>{usuario?.experiencia}</p>
                 </div>
 
                 <div className={classes.description}>
                   <div className="hashtags">
-                    {usuario.hashtags.split(",").map((hashtag, index) => {
-                      return (
-                        sectoresA(hashtag, index, "hashtags")
-                      )
-                    })}
-
+                    {usuario.hashtags == !null ?
+                      usuario?.hashtags.split(",").map((hashtag, index) => {
+                        return (
+                          sectoresA(hashtag, index, "hashtags")
+                        )
+                      }) : <></>}
                   </div>
                 </div>
 
                 <div className="contenedor">
                   <div className="canalesSection">
                     <p>Canales:
-                    {usuario.canales !== null ?
-                        usuario.canales.split(",").map((canal, index) => {
+                    {usuario?.canales !== null && usuario?.canales != undefined ?
+                        usuario?.canales.split(",").map((canal, index) => {
                           return (
                             <Icono codigo={canal} tipo="canal" key={index} nombre={canal} id={index} />
                           )
@@ -300,18 +328,26 @@ const ProfilePage = (props) => {
             <GridContainer>
               <GridItem xs={12} sm={12} md={6}>
                 <h6>Horarios disponibles</h6>
-                <Table id="tabla" columns={columns1} dataSource={agenda} pagination={false} />
+
+                {agenda !== null ? console.log(agenda) : console.log("no agenda")}
+                {
+                  agenda !== null ?
+                    <Table id="tabla" columns={columns1} dataSource={agenda} pagination={false} /> : <></>}
               </GridItem>
 
               <GridItem id="calendario1" xs={12} sm={12} md={6}>
 
                 <h6>Calendario de disponibilidad</h6>
-                <Calendar className="usuarioCliente" locale="es" value={date15} minDate={new Date()} disabledDates={props.global.usuario?.fechasnulas ? invalidDates() : null} disabledDays={invalidDays()} inline />
+
+                <Calendar className="usuarioCliente" locale="es" minDate={new Date()} disabledDates={invdate} disabledDays={invday} inline />
               </GridItem>
               <div className="margen"></div>
             </GridContainer>
           </div>
         </div>
+
+        <LoginPopUp link="contratar" visible={visible} handleCancel={() => setVisible(false)} />
+
       </div>
     )
   }
@@ -321,7 +357,7 @@ const ProfilePage = (props) => {
       {header()}
       {parallax()}
 
-      {usuario !== null ? body() :
+      {props.global !== null ? body() :
 
         <Fragment>
           <div className={classNames(classes.main, classes.mainRaised)}>
@@ -341,4 +377,4 @@ const mapStateToProps = (rootReducer) => {
   return { global: rootReducer.auth };
 };
 
-export default connect(mapStateToProps, authAction)(ProfilePage);
+export default connect(mapStateToProps, authAction)(ProfilePageCliente);

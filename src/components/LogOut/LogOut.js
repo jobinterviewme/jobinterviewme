@@ -3,16 +3,17 @@ import { useHistory } from "react-router-dom";
 import * as authAction from "../../store/actions/authAction"
 import { connect } from "react-redux";
 
-const LogOut=(props)=>{
-
-    const history=useHistory()
+const LogOut = (props) => {
+    console.log(props)
+    const history = useHistory()
     let usuario = {
         nombre: "",
-        apellidos:"",
-        email:"",
-        loginGoogle:false
+        apellidos: "",
+        email: "",
+        loginGoogle: false,
     }
     props.setUsuarioValues(usuario)
+    props.setUsuario(null);
 
     localStorage.setItem('JobInterviewMe', "");
 

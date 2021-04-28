@@ -39,7 +39,7 @@ const LoginPopUp = (props) => {
 
               <CardBody> 
                 <div className={classes.socialLine}>
-                  <GoogleLogin texto="Inicia sesión con Google"/>
+                  <GoogleLogin link={props.link} texto="Inicia sesión con Google"/>
                 </div>                 
                 <Form.Item
                   name="email"

@@ -71,7 +71,7 @@ const LogUpCard = (props) => {
     </CardHeader>
 
     <div className={classes.socialLine}>
-      <GoogleLogin texto="Inscripción con Google" />
+      <GoogleLogin link={props.link} texto="Inscripción con Google" />
     </div>
 
     <CardBody>

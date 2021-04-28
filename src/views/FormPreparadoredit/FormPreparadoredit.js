@@ -16,12 +16,12 @@ import Parallax from "components/Parallax/Parallax.js";
 
 
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
-import './FormPreparador.styles.scss'
-import Presentacion from "./Presentacion";
+import './FormPreparadoredit.styles.scss'
+import Presentacion from "./Presentacionedit";
 import AxiosConexionConfig from "conexion/AxiosConexionConfig";
 import { urlProfesional, urlUsuarios } from "configuracion/constantes";
 import LoginPage from "views/LoginPage/LoginPage";
-import Oferta1 from "./Oferta1";
+import Oferta1 from "./Oferta1edit";
 import { useHistory } from "react-router";
 import { linkperfilpor } from "../../configuracion/constantes"
 
@@ -33,6 +33,9 @@ const useStyles = makeStyles(styles);
 const FormPrepador = (props) => {
   const classes = useStyles();
   const { ...rest } = props;
+
+
+
   const [nombre, setNombre] = useState("")
   const [apellido, setApellido] = useState("")
   const [email, setEmail] = useState("")
@@ -49,7 +52,7 @@ const FormPrepador = (props) => {
   const [canales, setcanales] = useState([])
   const [hashtags, setHashtags] = useState("")
   const [tarifa, settarifa] = useState(0)
-  const [idusuario, setidUsuario] = useState("")
+  const [idusuario, setidUsuario] = useState(props.global.usuario.idusuario)
   const [agenda, setAgenda] = useState(null)
   const [existe, setExiste] = useState(false)
   const [load, setLoad] = useState(false)
@@ -76,22 +79,8 @@ const FormPrepador = (props) => {
     duracion: duracion,
     agenda: agenda
   }
-  const handleSubmit = (values) => {
-    console.log(values)
-  }
 
-  const setValoresUsuarios = (valores) => {
-    console.log(valores)
-    setNombre(valores.nombre)
-    setApellido(valores.apellido)
-    setEmail(valores.email)
-    setidUsuario(valores.idusuario)
-    //setPassword(valores.password)
-    //setAgenda(valores.agenda)
-    //console.log(valores)
-    BuscarUsuarioPorEmail(valores.email)
-    console.log(valores)
-  }
+
   const primerosValores = (valores) => {
     setNombrePerfil(valores.nombrePerfil)
     setannosExperiencia(valores.annosExperiencia)
@@ -103,7 +92,6 @@ const FormPrepador = (props) => {
     console.log(valores)
   }
   async function segundosValores(valores) {
-    console.log(valores)
     settarifa(valores.tarifa)
     settipoPreparación(valores.tipoPreparacion)
     setcanales(valores.canales)
@@ -112,12 +100,15 @@ const FormPrepador = (props) => {
     //setHashtags(valores.hashtags)
     //UploadUsuario()
     if (idusuario !== "") {
+      console.log(imagenperfil)
       const dataValue = {
+
         idusuario: idusuario,
         nombreperfil: nombrePerfil,
         annosexperiencia: annosExperiencia,
         experiencia: experiencia,
-        imagen: (imagenperfil !== undefined && imagenperfil[0] !== undefined ? imagenperfil[0].thumbUrl : null),
+
+        imagen: (imagenperfil !== undefined && imagenperfil[0] !== undefined ? (imagenperfil[0]?.url ? imagenperfil[0].url : imagenperfil[0].thumbUrl) : null),
         sectores: sectores.toString(),
         perfiles: perfiles.toString(),
         idiomas: idiomas.toString(),
@@ -126,13 +117,14 @@ const FormPrepador = (props) => {
         hashtags: hashtags,
         canales: valores.canales.toString(),
         tarifa: valores.tarifa,
-        fechasnulas: valores.calendario
+        //fechasnulas: valores.calendario
       }
       //console.log(dataValue)
-      const url = urlProfesional;
+      const url = urlProfesional + "/" + idusuario;
       try {
-        const respuesta = await AxiosConexionConfig.post(url, JSON.stringify(dataValue));
-        if (respuesta.status === 200) {
+        const respuesta = await AxiosConexionConfig.patch(url, JSON.stringify(dataValue));
+        console.log(respuesta.status)
+        if (respuesta.status === 204) {
           props.setUsuario(dataValue)
           history.push(linkperfilpor + "?" + idusuario)
           //return (<Link to={linkperfilpor}/>)
@@ -142,42 +134,10 @@ const FormPrepador = (props) => {
       }
     }
   }
-  /*useEffect(() => {
-    
-  }, [load]);
-*/
-  /*useEffect(() => {
-    if (idusuario !== "" && !existe) {
-      uploadData()
-    }
-  }, [idusuario]);
-*/
+
   const history = useHistory()
-  /*useEffect(() => {
-    console.log(existe)
-    if (existe) {
-      history.push(linkperfilpor + "?" + idusuario)
-    }
-  }, [existe]);
-*/
 
 
-  async function UploadUsuario() {
-    const dataValue = {
-      correo: email,
-      nombre: nombrePerfil
-    }
-    const url = urlUsuarios;
-    try {
-      const respuesta = await AxiosConexionConfig.post(url, JSON.stringify(dataValue));
-      console.log(respuesta)
-      if (respuesta.status === 200) {
-        setidUsuario(respuesta.data.idusuario)
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
 
   async function BuscarUsuarioPorEmail(usuarioEmail) {
     const condisiones = JSON.stringify({ where: { correo: { like: '%' + usuarioEmail + '%' } } })
@@ -194,35 +154,7 @@ const FormPrepador = (props) => {
     }
   }
 
-  async function uploadData() {
-    const dataValue = {
-      idusuario: idusuario,
-      nombreperfil: nombrePerfil,
-      annosexperiencia: annosExperiencia,
-      experiencia: experiencia,
-      imagen: (imagenperfil !== undefined && imagenperfil[0] !== undefined ? imagenperfil[0].thumbUrl : null),
-      sectores: sectores.toString(),
-      perfiles: perfiles.toString(),
-      idiomas: idiomas.toString(),
-      tipopreparacion: tipoPreparación,
-      duracion: duracion,
-      hashtags: hashtags,
-      canales: canales.toString(),
-      tarifa: tarifa
-    }
-    //console.log(dataValue)
-    const url = urlProfesional;
-    try {
-      const respuesta = await AxiosConexionConfig.post(url, JSON.stringify(dataValue));
-      if (respuesta.status === 200) {
-        props.setUsuario(dataValue)
-        history.push(linkperfilpor + "?" + idusuario)
-        //return (<Link to={linkperfilpor}/>)
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
+
   return (
     <div>
       <Header
@@ -249,7 +181,6 @@ const FormPrepador = (props) => {
 
       <div className={classNames(classes.main, classes.mainRaised)}>
         <StepWizard isLazyMount={true}>
-          <LoginPage usuario={usuario} setValoresUsuarios={(valores) => { setValoresUsuarios(valores) }} />
           <Presentacion valores={valoresIniciales} primerosValores={(valores) => { primerosValores(valores) }} />
           <Oferta1 valores={valoresSecundarios} segundosValores={(valores) => { segundosValores(valores) }} />
         </StepWizard>

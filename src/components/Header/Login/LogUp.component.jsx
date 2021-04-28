@@ -21,15 +21,14 @@ const LogUpPopUp = (props) => {
 
     return (
       <>       
-        <Modal 
-          
+        <Modal           
           visible={props.visibleUp}
           onCancel={()=>props.handleCancel()}
           footer={null}
           closable={false}
          >
 
-          <LogUpCard animation="" />
+          <LogUpCard link= {props.link} animation="" />
         </Modal>
       </>
     );

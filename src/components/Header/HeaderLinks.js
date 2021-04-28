@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 // react components for routing our app without refresh
@@ -20,8 +20,8 @@ import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-kit-react/components/headerLinksStyle.js";
 import './HeaderLink.styles.scss';
-import { linkpreparador } from "configuracion/constantes";
-import { linklogout } from "configuracion/constantes";
+import { linkpreparador, linkAreaPersonalCliente } from "configuracion/constantes";
+import { linklogout, linkAreaPersonalProfesional } from "configuracion/constantes";
 import * as authAction from "../../store/actions/authAction"
 import { connect } from "react-redux";
 import LoginPopUp from "./Login/Login.component";
@@ -45,11 +45,47 @@ function HeaderLinks(props) {
     setVisibleUp(true);
    }
 
+   const AreaPersonal=()=>{
+    if(props.global.email!==""){
+      if(props.global.usuario!==null){
+        return(
+        <ListItem className={classes.listItem}>
+        <Link to={linkAreaPersonalProfesional}>
+          <Button
+            color="transparent"
+            target="_self"
+            className={classes.navLink}
+          >
+            Área personal
+          </Button>
+        </Link>
+      </ListItem>)
+      }else{
+        return(
+        <ListItem className={classes.listItem}>
+        <Link to={linkAreaPersonalCliente}>
+          <Button
+            color="transparent"
+            target="_self"
+            className={classes.navLink}
+          >
+            Área personal
+          </Button>
+        </Link>
+      </ListItem>)
+      }
+    } else{
+      return(
+      <Fragment></Fragment>)
+    }
+   }
 
-  return (
-    <List id="header" className={classes.list}>
+   const SerPreparador=()=>{
 
-      <ListItem className={classes.listItem}>
+   
+    if(props.global.usuario===null){
+      return(
+        <ListItem className={classes.listItem}>
         <Link to={linkpreparador}>
           <Button
             color="transparent"
@@ -57,36 +93,15 @@ function HeaderLinks(props) {
             Ser Preparador
           </Button>
         </Link>
-      </ListItem>     
+      </ListItem> 
+      )
+    }
+  }
 
-      <ListItem className={classes.listItem}>
-        <Link to='/3'>
-          <Button
-            color="transparent"
-            target="_self"
-            className={classes.navLink}
-          >
-            Área personal
-        </Button>
-        </Link>
-      </ListItem>
-
-      <ListItem className={classes.listItem}>
-        <Link to={linkpreparador}>
-          <Button
-            color="transparent"
-            target="_self"
-            className={classes.navLink}
-          >
-            Ayuda
-          </Button>
-        </Link>
-      </ListItem>
-
+  return (
+    <List id="header" className={classes.list}>
+      {SerPreparador()}
       
-
-
-
      {/* <ListItem className={classes.listItem}>
 
         <Tooltip
@@ -141,6 +156,20 @@ function HeaderLinks(props) {
         </ListItem>
         */
   }
+
+      {AreaPersonal() }
+
+      <ListItem className={classes.listItem}>
+        <Link to={linkpreparador}>
+          <Button
+            color="transparent"
+            target="_self"
+            className={classes.navLink}
+          >
+            Ayuda
+          </Button>
+        </Link>
+      </ListItem>
       
       {props.global.loginGoogle ?
         <ListItem className={classes.listItem}>
@@ -166,7 +195,7 @@ function HeaderLinks(props) {
             Conectarse
             
           </Button>
-          <LoginPopUp visible={visible} handleCancel={()=>setVisible(false)} />
+          <LoginPopUp link="areaPersonal" visible={visible} handleCancel={()=>setVisible(false)} />
 
       </ListItem>
 
@@ -177,7 +206,7 @@ function HeaderLinks(props) {
             onClick={()=>onChangeVisibleUp()}>
             Inscribirse
           </Button>
-          <LogUpPopUp visibleUp={visibleUp} handleCancel={()=>setVisibleUp(false)} />
+          <LogUpPopUp link="areaPersonal" visibleUp={visibleUp} handleCancel={()=>setVisibleUp(false)} />
 
       </ListItem></>
         )}

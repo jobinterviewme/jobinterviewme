@@ -38,6 +38,11 @@ import { Paginator } from 'primereact/paginator';
 import { InputText } from 'primereact/inputtext';
 import { AutoComplete } from 'primereact/autocomplete';
 
+//redux
+import * as authAction from "../../store/actions/authAction"
+import { connect } from "react-redux";
+import { linkperfilporClient } from 'configuracion/constantes';
+
 
 const useStyles = makeStyles(styles);
 
@@ -73,7 +78,10 @@ const ProfesionalesPreview = (props) => {
     const ArrayProfesionales = Canales.canales;
     
     const goToPerfil=(id)=>{
-        history.push(linkperfilpor+"?"+id)
+
+      (((props.global?.usuario?.idusuario)!==id)||(props.global?.usuario?.idusuario===undefined))?
+      history.push(linkperfilporClient+"?"+id)
+      : history.push(linkperfilpor+"?"+id);
     }
 
     useEffect(() => {
@@ -177,7 +185,8 @@ const ProfesionalesPreview = (props) => {
           setFilteredSector(_filteredSector);
       }, 250);
   }
-    const ProfesionalCard=(profesional)=>{
+    
+  const ProfesionalCard=(profesional)=>{
       return(
         <Card id="cardProf" className={classes[cardAnimaton]}>
                 <form className={classes.form}>
@@ -187,7 +196,7 @@ const ProfesionalesPreview = (props) => {
                   <CardBody>
                   <div className={classes.profile}>
                     <div className="divImg">
-                      <img src= {"data:image/png;base64,"+profesional.imagen} alt="..." className="imgRaised imgRoundedCircle imgFluid" />  
+                      <img src= {profesional.imagen} alt="..." className="imgRaised imgRoundedCircle imgFluid" />  
                       <div id="letras">
                           <h3 className={classes.title}>{(profesional.nombreperfil).toUpperCase()}</h3>                         
                           <p>{profesional.annosexperiencia} años de experiencia</p>
@@ -206,7 +215,8 @@ const ProfesionalesPreview = (props) => {
                   
                   <CardFooter className={classes.cardFooter}>
                     <Button className="precio" simple color="primary" onClick={()=>goToPerfil(profesional.idusuario)} size="lg">
-                      <span className="precioText">{profesional.tarifa}€ / {profesional.duracion}’ entrevista</span>
+                     
+                      <span className="precioText">{profesional.tarifa}€ / {profesional.duracion}</span>
                     </Button>                    
                   </CardFooter>
 
@@ -372,4 +382,9 @@ const ProfesionalesPreview = (props) => {
 
 }
 
-export default ProfesionalesPreview
+const mapStateToProps = (rootReducer) => {
+  return { global: rootReducer.auth };
+};
+
+export default connect(mapStateToProps, authAction)(ProfesionalesPreview);
+

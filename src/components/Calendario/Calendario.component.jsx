@@ -3,17 +3,12 @@ import {  Drawer, Button, Radio, Space } from 'antd';
 import { CalendarTwoTone } from "@ant-design/icons";
 import { Calendar } from "react-multi-date-picker"
 import DatePanel from "react-multi-date-picker/plugins/date_panel" 
-
+import './Calendario.style.scss'
 
 
 class Calendario extends React.Component {
   
-    state = { visible: false, calendar: 
-        [
-            new Date(),
-            "2021/05/10"
-        ]
-    };
+  state = { visible: false};
 
   showDrawer = () => {
     this.setState({
@@ -28,12 +23,8 @@ class Calendario extends React.Component {
   };
   
   setCalendar = (a) => {
-    this.setState({
-      calendar: a,
-    });
-  };
-
-  
+    this.props.setCalendario(a);
+  };  
 
   render() {
     const { visible } = this.state;
@@ -56,7 +47,7 @@ class Calendario extends React.Component {
         ><p> </p><p> </p>
           <p>Especifica los días que no vas a estar disponible</p>
           
-          <Calendar value={this.state.calendar}
+          <Calendar value={this.props.calendario}
             onChange={(a) => this.setCalendar(a)}
             multiple
             format="DD/MM/YYYY"

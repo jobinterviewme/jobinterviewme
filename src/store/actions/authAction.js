@@ -1,57 +1,63 @@
 
 
-export const loadData=(values)=> async (dispatch )=>{
-  dispatch({
-      type:'loading'
-  });
-  try{
-      dispatch({
-          type: 'data',
-          dataT :values
-      })
-  }catch (e) {
-      dispatch({
-          type:'error',
-          dataT : "Error",
-      });
-  }
+export const loadData = (values) => async (dispatch) => {
+    dispatch({
+        type: 'loading'
+    });
+    try {
+        dispatch({
+            type: 'data',
+            dataT: values
+        })
+    } catch (e) {
+        dispatch({
+            type: 'error',
+            dataT: "Error",
+        });
+    }
 
 };
-export const CookiesOn=()=> async (dispatch )=>{
+export const CookiesOn = () => async (dispatch) => {
     dispatch({
-        type:'cookiesOn'
+        type: 'cookiesOn'
     });
 };
-export const CookiesOff=()=> async (dispatch )=>{
+export const CookiesOff = () => async (dispatch) => {
     dispatch({
-        type:'cookiesOff'
+        type: 'cookiesOff'
     });
 };
-export const logOut=()=> async (dispatch )=>{
+export const logOut = () => async (dispatch) => {
     dispatch({
-        type:'logout'
+        type: 'logout'
     });
 };
-export const initGlobalData=()=> async (dispatch )=>{
+export const initGlobalData = () => async (dispatch) => {
     dispatch({
-        type:'initGlobal'
+        type: 'initGlobal'
     });
 };
-export const setIdleTimerOut=(value)=> async (dispatch )=>{
+export const setIdleTimerOut = (value) => async (dispatch) => {
     dispatch({
-        type:'setIdle',
+        type: 'setIdle',
         data: value,
     });
 };
-export const setUsuarioValues=(value)=> async (dispatch )=>{
+export const setUsuarioValues = (value) => async (dispatch) => {
     dispatch({
-        type:'setUsuarioValues',
+        type: 'setUsuarioValues',
         data: value,
     });
 };
-export const resetIdleTimerOut=()=> async (dispatch )=>{
+export const setUsuario = (value) => async (dispatch) => {
     dispatch({
-        type:'setIdle',
+        type: 'setUsuario',
+        data: value,
+    });
+};
+export const resetIdleTimerOut = () => async (dispatch) => {
+    dispatch({
+        type: 'setIdle',
         data: (1000 * 20 * 60),
     });
 };

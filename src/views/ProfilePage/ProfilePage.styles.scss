@@ -126,3 +126,39 @@ p.sectores, p{
   }
   
   }
+
+  .editarUsserIcon {
+    color: #555;
+    transform: translate3d(50px, -120px, 0);
+    font-size: 30px !important;
+    z-index: 5;
+    position: absolute;
+  }
+
+ #idCal .p-datepicker table td > span.p-highlight {
+    color: #495057;
+    background: #fff !important;
+    cursor:default;
+}
+
+#idCal .p-datepicker:not(.p-disabled) table td span:not(.p-highlight):not(.p-disabled):hover {
+  background: #fff !important;
+  cursor:default !important;
+
+}
+
+#idCal .p-datepicker table td > span:focus {
+  outline: 0 none;
+  outline-offset: 0;
+  box-shadow: 0 0 0 0 #fff !important;
+}
+
+.p-disabled{
+  color:rgb(223, 219, 219) !important;
+}
+
+button.contratar{
+  margin-top: 20px !important;
+}
+
+  

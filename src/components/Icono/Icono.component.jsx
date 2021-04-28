@@ -77,37 +77,37 @@ const Icono = (props) => {
     switch (props.codigo) {        
       case "Skype":
         return (   
-          <div className="canales">       
-            <img src={SK} id={props.id}  />
+          <div id={props.id} className="canales">       
+            <img src={SK}  />
           </div>);
       case "Zoom":
         return (            
-          <div className="canales">       
-            <img src={ZO} id={props.id}  />
+          <div id={props.id} className="canales">       
+            <img src={ZO} />
           </div>);      
       case "Teams":
         return (   
-          <div className="canales">       
-            <img src={TE} id={props.id}  />
+          <div id={props.id} className="canales">       
+            <img src={TE}  />
           </div>)
       case "Google Meets":
         return (
-          <div className="canales">       
-            <img src={GM} id={props.id}  />
+          <div id={props.id} className="canales">       
+            <img src={GM}  />
           </div>);
       case "Google Hangouts":
         return (
-          <div className="canales">       
-            <img src={HG} id={props.id}  />
+          <div id={props.id} className="canales">       
+            <img src={HG}   />
           </div>);      
       case "Jitsi":
         return (
-          <div className="canales">       
-            <img src={JI} id={props.id}  />
+          <div id={props.id} className="canales">       
+            <img src={JI}   />
           </div>)      
       default:
         return (
-          <div className="canales">{props.nombre} </div>
+          <div id={props.id} className="canales">{props.nombre} </div>
         );   
     }
 }
