@@ -4,7 +4,7 @@ import * as authAction from "../../store/actions/authAction"
 import { connect } from "react-redux";
 
 const LogOut = (props) => {
-    console.log(props)
+    //console.log(props)
     const history = useHistory()
     let usuario = {
         nombre: "",

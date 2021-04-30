@@ -80,10 +80,8 @@ function HeaderLinks(props) {
     }
    }
 
-   const SerPreparador=()=>{
-
-   
-    if(props.global.usuario===null){
+   const SerPreparador = () => {   
+    if(props.global.usuario === null){
       return(
         <ListItem className={classes.listItem}>
         <Link to={linkpreparador}>
@@ -171,7 +169,7 @@ function HeaderLinks(props) {
         </Link>
       </ListItem>
       
-      {props.global.loginGoogle ?
+      {props.global.login?
         <ListItem className={classes.listItem}>
           <Link to={linklogout}>
             <Button

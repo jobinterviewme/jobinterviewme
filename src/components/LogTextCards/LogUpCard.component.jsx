@@ -26,6 +26,7 @@ import * as authAction from "../../store/actions/authAction"
 import { connect } from "react-redux";
 import { Form, Input, Space, Select, TimePicker, Row, Col, Tag, InputNumber } from 'antd';
 import Texto from './Texto.component';
+import AxiosConexionConfig from "conexion/AxiosConexionConfig";
 
 const useStyles = makeStyles(styles);
 
@@ -36,30 +37,30 @@ const LogUpCard = (props) => {
 
   const [requerido, setRequerido] = useState(true)
 
-
-  /*const usuario = {
-    nombre: props.global.nombre,
-    apellido: props.global.apellido,
-    email: props.global.email,
-    password: props.global.password
-  }*/
-  const goToStep2 = () => {
-    //props.setUsuario(props.usuario)
-    //props.goToStep(2);
-  }
-
-  /*useEffect(() => {
-    if (props.global.loginGoogle === true) {
-      setRequerido(false)
-      props.setUsuario(usuario)
-      props.goToStep(2);
-
-    }
-  }, [props.global.loginGoogle]);*/
-
-  const onFinish = values => {
-    goToStep2();
+  const onFinish = (values) => {
+    signUp(values);
   };
+
+  async function signUp(values) {
+    const signUpURL = "/signUp";
+    const ProfesionalURL = "/profesionals?filter[where][idusuario]=";
+
+    let valores = {
+      nombre: values.nombre,
+      apellidos: values.apellido,
+      correo: values.email,
+      password: values.password,
+      link: "jjjj"
+    }
+
+    try {
+      AxiosConexionConfig.post(signUpURL, JSON.stringify(valores)).then((usser) => {
+        //console.log(usser.data.token)
+      })
+    }catch (e) {
+      throw console(eee);
+    }
+  }
 
   return (
 

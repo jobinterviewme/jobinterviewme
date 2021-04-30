@@ -53,7 +53,7 @@ const ProfilePageCliente = (props) => {
     const classes = useStyles();
     const [date15, setDate15] = useState(null);
     const [city, setCity] = useState(null);
-    const history=useHistory();
+    const history = useHistory();
 
     const [visible, setVisible] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
@@ -158,6 +158,7 @@ const ProfilePageCliente = (props) => {
       }   
      
       try {
+
         const profesional = await AxiosConexionConfig.get(citasProfesionalURL + encodeURIComponent(JSON.stringify(otro)));
         setAgenda(profesional.data[0].ProfesionalAgendas);
         setArray(profesional.data[0].fechasnulas.split(","));
@@ -258,10 +259,15 @@ default: fechaArray.push("");;
         
         const url = urlCitas;
         try {
+
           const respuesta = await AxiosConexionConfig.post(url, JSON.stringify(dataValue));
           if (respuesta.status === 200) {
             //props.setUsuario(dataValue)
             history.push(linkperfilpor + "?" + idusuario)
+
+
+            
+
             //return (<Link to={linkperfilpor}/>)
           }
         } catch (e) {

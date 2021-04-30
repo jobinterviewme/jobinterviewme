@@ -10,16 +10,64 @@ import GoogleLogin from "components/GoogleLogin/GoogleLogin"
 import { makeStyles } from "@material-ui/core";
 import styles from "../../../assets/jss/material-kit-react/views/loginPage.js";
 import Button from "components/CustomButtons/Button.js";
+import md5 from "md5";
+import AxiosConexionConfig from 'conexion/AxiosConexionConfig';
+import { connect } from 'react-redux';
+import * as authAction from "../../../store/actions/authAction"
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles(styles);
 
 const LoginPopUp = (props) => {
 
+  const history = useHistory()
+
+
   const classes = useStyles();
 
   const onFinish = values => {
-    console.log(values);
+    Login(values.email ,md5(values.password));
   };
+
+  async function Login(user, password) {
+    const loginURL = "/login";
+    const ProfesionalURL = "/profesionals?filter[where][idusuario]=";
+
+    let valores = {
+      username: user,
+      password: password,
+    }
+
+    try {
+      AxiosConexionConfig.post(loginURL, JSON.stringify(valores)).then((usser) => {
+        console.log(usser.data.token)
+        let usuario = {
+          idusuario: usser.data.data.idusuario,
+          nombre: usser.data.data.nombre,
+          apellidos: usser.data.data.apellidos,
+          email: usser.data.data.correo,
+          rol: usser.data.data.rol,
+          login: true,
+          token: usser.data.token
+        }
+
+        if(usser.data.data.rol === 2){
+          props.setUsuarioValues(usuario);
+          AxiosConexionConfig.get(ProfesionalURL + usser.data.data.idusuario).then((a) => {
+          props.setUsuario(a.data[0]);
+          history.push("/area-profesional")})
+        }
+        else{if(usser.data.data.rol === 1){
+          props.setUsuarioValues(usuario); 
+          history.push("/area-cliente") 
+        }else{
+            console.log("error");
+        }}
+      })
+    }catch (e) {
+      console.log(e);
+    }
+  }
 
     return (
       <>       
@@ -47,11 +95,11 @@ const LoginPopUp = (props) => {
                   rules={[
                     {
                       type: 'email',
-                      message: 'The input is not valid E-mail!',
+                      message: 'Inserte una dirección de correo válida',
                     },
                     {
                       required: true,
-                      message: 'Please input your E-mail!',
+                      message: 'Por favor inserte su correo',
                     },
                   ]}
                 >
@@ -64,7 +112,7 @@ const LoginPopUp = (props) => {
                   rules={[
                     {
                       required: true,
-                      message: 'Please input your password!',
+                      message: 'Por favor inserte su contraseña',
                     },
                   ]}
                     
@@ -88,5 +136,8 @@ const LoginPopUp = (props) => {
     );
   }
 
-
-export default LoginPopUp;
+  const mapStateToProps = (rootReducer) => {
+    return { global: rootReducer.auth };
+  };
+  
+  export default connect(mapStateToProps, authAction)(LoginPopUp);

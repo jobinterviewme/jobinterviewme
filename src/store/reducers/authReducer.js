@@ -7,7 +7,9 @@ const initState = {
     apellidos: "",
     email: "",
     idusuario: "",
-    loginGoogle: "",
+    rol: "",
+    login: "",
+    token: "",
     idleTimeOut: (1000 * 20 * 60),
     cookies: false,
     usuario: null,
@@ -28,7 +30,7 @@ const authReducer = (state = initState, action) => {
         case 'setIdle':
             return { ...state, idleTimeOut: action.data };
         case 'setUsuarioValues':
-            return { ...state, nombre: action.data.nombre, email: action.data.email, apellidos: action.data.apellidos, idusuario: action.data.idusuario, loginGoogle: action.data.loginGoogle };
+            return { ...state, nombre: action.data.nombre, correo: action.data.correo, email: action.data.email, apellidos: action.data.apellidos, rol: action.data.rol, idusuario: action.data.idusuario, login: action.data.login, token: action.data.token };
         case 'setUsuario':
             return { ...state, usuario: action.data };
         case 'data':

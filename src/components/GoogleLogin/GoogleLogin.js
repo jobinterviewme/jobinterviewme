@@ -34,18 +34,14 @@ const GoogleLoginComponent = (props) => {
     console.log(response);
   }
 
-
-
   const responseGoogle = (response) => {
     let usuario = {
       nombre: response.profileObj.givenName,
       apellidos: response.profileObj.familyName,
       email: response.profileObj.email,
-      loginGoogle: true
+      login: true
     }
     Profesional(usuario);
-
-
   }
 
   const history = useHistory()
@@ -86,6 +82,7 @@ const GoogleLoginComponent = (props) => {
         AxiosConexionConfig.get("/usuarios?filter=" + decodeURI(JSON.stringify(urlCondicion))).then((respuesta) => {
           //console.log(respuesta.data);
           usuario.idusuario = respuesta.data[0].idusuario;
+          usuario.rol = respuesta.data[0].rol;
           props.setUsuarioValues(usuario);
         })
 

@@ -34,7 +34,6 @@ function LoginPage(props) {
   const { ...rest } = props;
 
   useEffect(() => {
-    console.log(props)
     if (props.global.email !== "") {
       if (props.global.usuario !== null) {
         history.push(linkperfilpor + "?" + props.global.usuario.idusuario)

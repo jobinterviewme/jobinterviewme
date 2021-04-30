@@ -50,6 +50,7 @@ const AreaPersonal=(props)=> {
     }
 
     useEffect(() => {
+      
       if(props.global.idusuario!==""){
         const Usuarioo = {        
           nombre:props.global.nombre,
