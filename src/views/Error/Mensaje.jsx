@@ -17,67 +17,11 @@ import Cargando from "../../components/Cargando/Cargando.component"
 
 const useStyles = makeStyles(styles);
 
-const VerificarCorreo = (props) => {
+const Mensaje = (props) => {
 
     const history = useHistory();
     const classes = useStyles();
-    const [tokenDes, setTokenDes] = useState([]);
-
-    const token = {
-        token: props.location.search.split("?")[1]
-    }
-    const URL= "/verificar-token"
-    const rol = {
-        rol: 1
-    }
-    const UsuarioURL = "/usuarios/"
-
-    useEffect(() => {
-        TokenVerified()
-    }, [])
-
-    async function Login(respuesta1) {
-        try {         
-            let usuario = {
-              idusuario: respuesta1?.data?._id,
-              nombre: respuesta1?.data?.nombre,
-              apellidos: respuesta1?.data?.apellidos,
-              email: respuesta1?.data?.correo,
-              rol: 1,
-              login: true,
-              token: token.token
-            }    
-            console.log(usuario)
-              props.setUsuarioValues(usuario).then( 
-                history.push("/area-cliente")
-              )
-
-        }catch (e) {
-          console.log(e);
-        }
-      }
     
-
-    async function TokenVerified() {
-        
-        try {
-          const respuesta1 = await AxiosConexionConfig.post(URL,JSON.stringify(token));
-           console.log(respuesta1);
-           setTokenDes(respuesta1);
-           if(respuesta1!==null){
-               console.log("diferente de null")
-            await AxiosConexionConfig.patch(UsuarioURL+respuesta1.data._id,JSON.stringify(rol));
-            Login(respuesta1);
-        }
-
-        } catch (e) {
-          console.log(e);
-        }
-    }
-
-    const mensaje = () => {
-
-    }
 
 return (
     <div>
@@ -103,7 +47,7 @@ return (
       </Parallax>
 
       <div className={classNames(classes.main, classes.mainRaised)+ " verificadoDiv"}>
-         <div className="verificado"><Cargando/></div>
+         <h6 className="verificado">Acceda su correo electrónico para verificar que sus datos son válidos.</h6>
 
       </div>
     </div>
@@ -113,5 +57,5 @@ const mapStateToProps = (rootReducer) => {
   return { global: rootReducer.auth };
 };
 
-export default connect(mapStateToProps, authAction)(VerificarCorreo);
+export default connect(mapStateToProps, authAction)(Mensaje);
 

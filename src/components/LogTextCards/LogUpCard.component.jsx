@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -21,18 +21,20 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import GoogleLogin from "components/GoogleLogin/GoogleLogin"
 import styles from "assets/jss/material-kit-react/views/loginPage.js";
 import './LogUpCard.styles.scss';
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import * as authAction from "../../store/actions/authAction"
 import { connect } from "react-redux";
 import { Form, Input, Space, Select, TimePicker, Row, Col, Tag, InputNumber } from 'antd';
 import Texto from './Texto.component';
 import AxiosConexionConfig from "conexion/AxiosConexionConfig";
+import { Messages } from 'primereact/messages';
 
 const useStyles = makeStyles(styles);
 
 
 const LogUpCard = (props) => {
 
+  const history = useHistory();
   const classes = useStyles();
 
   const [requerido, setRequerido] = useState(true)
@@ -50,17 +52,27 @@ const LogUpCard = (props) => {
       apellidos: values.apellido,
       correo: values.email,
       password: values.password,
-      link: "jjjj"
+      link: "http://localhost:3000/verificar?"
     }
 
     try {
       AxiosConexionConfig.post(signUpURL, JSON.stringify(valores)).then((usser) => {
-        //console.log(usser.data.token)
+        if(usser.data){
+          history.push("/mensaje")
+        }else{
+          console.log(usser.data)
+          msgs1.current.show([
+            { severity: 'error', summary: '', life: 30000, detail: 'El usuario ya existe' }
+          ]);
+        }
+        
       })
     }catch (e) {
       throw console(eee);
     }
   }
+
+  const msgs1 = useRef(null);
 
   return (
 
@@ -70,6 +82,8 @@ const LogUpCard = (props) => {
     <CardHeader color="primary" className={classes.cardHeader}>
       <h4 className="blanco">Crea tu perfil</h4>
     </CardHeader>
+
+    <Messages ref={msgs1} />
 
     <div className={classes.socialLine}>
       <GoogleLogin link={props.link} texto="Inscripción con Google" />
@@ -81,10 +95,10 @@ const LogUpCard = (props) => {
         name="nombre"
         rules={[{
           required: requerido,
-          message: 'Please input your Tipo de preparación!',
+          message: 'Por favor inserte su nombre',
         },]}
       >
-        <Input placeholder="Tipo de preparación" />
+        <Input placeholder="Nombre" />
       </Form.Item>
 
       <Form.Item
@@ -92,10 +106,10 @@ const LogUpCard = (props) => {
         name="apellido"
         rules={[{
           required: requerido,
-          message: 'Please input your Tipo de preparación!',
+          message: 'Por favor inserte sus apellidos',
         },]}
       >
-        <Input  placeholder="Tipo de preparación" />
+        <Input  placeholder="Apellido" />
       </Form.Item>
 
 
@@ -105,40 +119,40 @@ const LogUpCard = (props) => {
         rules={[
           {
             type: 'email',
-            message: 'The input is not valid E-mail!',
+            message: 'Por favor inserte una dirección de correo válida',
           },
           {
             required: requerido,
-            message: 'Please input your E-mail!',
+            message: 'Por favor inserte su dirección de correo',
           },
         ]}
       >
-        <Input />
+        <Input placeholder="E-mail" />
       </Form.Item>
 
       <Form.Item
         name="password"
-        label="Password"
+        label="Contraseña"
         rules={[
           {
             required: requerido,
-            message: 'Please input your password!',
+            message: 'Por favor inserte su contraseña',
           },
         ]}
         hasFeedback
       >
-        <Input.Password />
+        <Input.Password placeholder="Contraseña" />
       </Form.Item>
 
       <Form.Item
         name="confirm"
-        label="Confirm Password"
+        label="Confirmar contraseña"
         dependencies={['password']}
         hasFeedback
         rules={[
           {
             required: requerido,
-            message: 'Please confirm your password!',
+            message: 'Por favor confirme su contraseña',
           },
           ({ getFieldValue }) => ({
             validator(_, value) {
@@ -146,12 +160,12 @@ const LogUpCard = (props) => {
                 return Promise.resolve();
               }
 
-              return Promise.reject(new Error('The two passwords that you entered do not match!'));
+              return Promise.reject(new Error('Estas contraseñas no coinciden'));
             },
           }),
         ]}
       >
-        <Input.Password />
+        <Input.Password placeholder="Contraseña"/>
       </Form.Item>
 
 

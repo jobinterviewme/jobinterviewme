@@ -61,6 +61,7 @@ const AreaPersonalCiente=(props)=> {
     useEffect(() => {
      
         RefreshUsuario()
+        console.log(props.global)
             
     }, [props.global.email]);
 

@@ -49,6 +49,7 @@ import ContratarCita from "views/ContratarCita/ContratarCita.component";
 import FormPreparadoredit from "views/FormPreparadoredit/FormPreparadoredit";
 import { linkpreparadoredit } from "configuracion/constantes";
 import VerificarCorreo from "views/Error/VerificarCorreo";
+import Mensaje from "views/Error/Mensaje";
 
 
 ReactDOM.render(
@@ -69,6 +70,8 @@ ReactDOM.render(
         <Route exact path={linkperfilporClient} component={ProfilePageCiente} />
         <Route exact path={linkContratarCita} component={ContratarCita} />
         <Route exact path="/verificar" component={VerificarCorreo} />
+        <Route exact path="/mensaje" component={Mensaje} />
+
 
 
       </Switch>
