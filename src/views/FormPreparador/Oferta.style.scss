@@ -1,0 +1,30 @@
+.OfertaFrom{
+    padding: 50px;
+}
+
+.OfertaCol1, .OfertaCol2{
+    padding: 30px;
+}
+
+.anticon-calendar svg{
+    width: 1.8em !important;
+    height: 1.8em !important;
+}
+
+.buttonCal, .buttonCal:hover, .buttonCal:focus{
+    border:0 !important;
+    box-shadow: white !important;
+}
+
+.buttonCal::after{
+    --antd-wave-shadow-color: white !important;
+}
+
+.p-col-fixed{
+    margin-left:8px;
+}
+
+.botonadd{
+    width: 70%;
+}
+
