@@ -44,13 +44,9 @@ function LoginPage(props) {
           email: props.global.email,
           idusuario: props.global.idusuario
         }
-        console.log(usuario)
-        //props.setUsuario(usuario)
         props.setValoresUsuarios(usuario)
         props.goToStep(2)
       }
-      //BuscarUsuarioPorEmail(props.global.email)
-
     }
   }, [props.global.usuario, props.global.email]);
 
@@ -87,7 +83,7 @@ function LoginPage(props) {
             </GridItem>
 
             <GridItem xs={12} sm={12} md={5}>
-              <LogUpCard animation={cardAnimaton} />
+              <LogUpCard link="serPreparador" page="preparador" handleCancel={() => console.log("inscripcion formPreparador")} animation={cardAnimaton} />
             </GridItem>
           </GridContainer>
 

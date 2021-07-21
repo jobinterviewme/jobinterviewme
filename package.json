@@ -1,8 +1,8 @@
 {
-  "name": "material-kit-react",
+  "name": "jobinterviewme",
   "version": "1.9.0",
-  "description": "Material Kit React. Coded by Creative Tim",
-  "private": true,
+  "description": "Job InterView Me",
+  "private": false,
   "main": "src/index.js",
   "dependencies": {
     "@ant-design/icons": "^4.0.0",
@@ -31,7 +31,7 @@
     "react-datetime": "2.16.3",
     "react-dom": "16.13.1",
     "react-google-login": "^5.2.2",
-    "react-hook-form": "^6.15.5",
+    "react-hook-form": "^6.15.7",
     "react-multi-date-picker": "^2.3.1",
     "react-redux": "^7.2.3",
     "react-router-dom": "5.2.0",
@@ -39,6 +39,7 @@
     "react-slick": "0.26.1",
     "react-step-wizard": "^5.3.5",
     "react-swipeable-views": "0.13.9",
+    "react-time-range-picker": "^1.4.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.2.3",

@@ -35,6 +35,7 @@ import { Redirect, useHistory } from "react-router";
 
 
 import { linkSearchPage } from "configuracion/constantes";
+import carga from 'assets/img/carga.gif'
 
 
 
@@ -49,8 +50,11 @@ const AreaPersonalCiente=(props)=> {
   const [citas, setCitas] = useState(null)
   const [reload,setReload] = useState(true);
   const [id, setId] = useState(false);
+  const [cargando, setCargando] = useState(false)
+
   const fechaHoy = new Date();
   const history=useHistory()
+
 
   let is1 = "";
 
@@ -61,13 +65,19 @@ const AreaPersonalCiente=(props)=> {
     useEffect(() => {
      
         RefreshUsuario()
-        console.log(props.global)
             
     }, [props.global.email]);
 
     useEffect(() => {
      // setCitas(null)    
     }, [props.global.usuario]);  
+
+    useEffect(() => {
+      if(reload){
+        RefreshUsuario()
+        setReload(false);
+      }      
+    }, [reload]);
 
   async function RefreshUsuario() {    
 
@@ -91,8 +101,7 @@ const AreaPersonalCiente=(props)=> {
       console.log(Usuario.data[0].UsuarioCitas);
   
       if(Usuario.data[0]?.UsuarioCitas!==null && Usuario.data[0]?.UsuarioCitas!==undefined) {
-        console.log(Usuario.data);
-        setCitas(Usuario.data[0].UsuarioCitas);
+       setCitas(Usuario.data[0].UsuarioCitas);
       }
 
        
@@ -121,14 +130,9 @@ const AreaPersonalCiente=(props)=> {
         {...rest}
       />
 
-      <Parallax id="sombra" small filter color="headerGreen" >
-        <div className={classes.container + " headerNameTitle"}>
-
-
-
-
-          <GridContainer >
-            
+      <Parallax id="sombra" small filter color="orange" >
+        <div className={classes.container + " headerNameTitle "}>
+          <GridContainer >            
               <GridItem xs={12} sm={12} md={12}>
                 <h3 className={classes.title + " nameTitle"}>{usuario !== null ? usuario.nombre +" "+ usuario.apellidos +" ": ""}
                 
@@ -148,7 +152,6 @@ const AreaPersonalCiente=(props)=> {
       <div className={"contenedorBlanco " + classNames(classes.main, classes.mainRaised)}>
         <div>
           <div className={classes.container}>
-{console.log(props.global)}
             {(props.global.usuario!==null)?(
               <GridContainer className="este" justify="flex-end">
               <Link className="DivIconR" to={"/area-profesional"}>
@@ -212,8 +215,7 @@ const AreaPersonalCiente=(props)=> {
                       citas.map((cita, index) => {
 
                         const fechaA = cita?.fecha.split("-");
-                        //const horaA = cita?.hora.split(":");
-                        const fechaCita =new Date(cita.fecha/*fechaA[0],fechaA[1]-1,fechaA[2],horaA[0],horaA[1]*/);
+                       const fechaCita =new Date(cita.fecha);
 
                         if(fechaCita < fechaHoy&&cita?.confirmada==="true"){
                           return(

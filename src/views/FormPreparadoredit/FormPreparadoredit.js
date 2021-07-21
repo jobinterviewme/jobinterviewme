@@ -34,12 +34,6 @@ const FormPrepador = (props) => {
   const classes = useStyles();
   const { ...rest } = props;
 
-
-
-  const [nombre, setNombre] = useState("")
-  const [apellido, setApellido] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [nombrePerfil, setNombrePerfil] = useState("")
   const [annosExperiencia, setannosExperiencia] = useState(0)
   const [experiencia, setexperiencia] = useState("")
@@ -50,27 +44,23 @@ const FormPrepador = (props) => {
   const [tipoPreparación, settipoPreparación] = useState("")
   const [duracion, setduracion] = useState("")
   const [canales, setcanales] = useState([])
-  const [hashtags, setHashtags] = useState("")
+  const [hashtag, setHashtag] = useState("")
   const [tarifa, settarifa] = useState(0)
   const [idusuario, setidUsuario] = useState(props.global.usuario.idusuario)
   const [agenda, setAgenda] = useState(null)
   const [existe, setExiste] = useState(false)
-  const [load, setLoad] = useState(false)
-  const usuario = {
-    nombre: nombre,
-    apellido: apellido,
-    email: email,
-    password: password
-  }
+  const [cargando, setCargando] = useState(false)
+
+
   const valoresIniciales = {
-    nombrePerfil: nombre,
+    nombrePerfil: nombrePerfil,
     annosExperiencia: annosExperiencia,
     experiencia: experiencia,
     imagenperfil: imagenperfil,
     sectores: sectores,
     perfiles: perfiles,
     idiomas: idiomas,
-    hashtags: hashtags
+    hashtag: hashtag
   }
   const valoresSecundarios = {
     tarifa: tarifa,
@@ -80,7 +70,6 @@ const FormPrepador = (props) => {
     agenda: agenda
   }
 
-
   const primerosValores = (valores) => {
     setNombrePerfil(valores.nombrePerfil)
     setannosExperiencia(valores.annosExperiencia)
@@ -89,71 +78,76 @@ const FormPrepador = (props) => {
     setsectores(valores.sectores)
     setperfiles(valores.perfiles)
     setidiomas(valores.idiomas)
-    console.log(valores)
   }
-  async function segundosValores(valores) {
+
+  const segundosValoresSinBD = (valores) => {
     settarifa(valores.tarifa)
     settipoPreparación(valores.tipoPreparacion)
     setcanales(valores.canales)
     setduracion(valores.duracion)
     setAgenda(valores.agenda)
-    //setHashtags(valores.hashtags)
+    setHashtag(valores.hashtag)
+  }
+
+  async function segundosValores(valores) {
+    setCargando(true)
+    settarifa(valores.tarifa)
+    settipoPreparación(valores.tipoPreparacion)
+    setcanales(valores.canales)
+    setduracion(valores.duracion)
+    setAgenda(valores.agenda)
+    setHashtag(valores.hashtag)
     //UploadUsuario()
     if (idusuario !== "") {
-      console.log(imagenperfil)
       const dataValue = {
-
         idusuario: idusuario,
         nombreperfil: nombrePerfil,
         annosexperiencia: annosExperiencia,
         experiencia: experiencia,
-
-        imagen: (imagenperfil !== undefined && imagenperfil[0] !== undefined ? (imagenperfil[0]?.url ? imagenperfil[0].url : imagenperfil[0].thumbUrl) : null),
+        //imagen: (imagenperfil.length !== 0 ? (imagenperfil[0]?.url ? imagenperfil[0].url : imagenperfil[0].thumbUrl) : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXz8/TR0tTOz9Ly8vPT1Nbv7/DW19nf3+Hc3N7l5uft7e7Oz9Hi4+Tm5+jq6uzY2dvJw9RkAAAD2ElEQVR4nO3cf5OcIAwG4EPFX7i73//bVs56Wle9BWIS7Pv8cdPZTjubAUKIeF9fAAAAAAAAAAAAAAAAAAAAAAAAAAAAQM/2j6atjfNM3TaP3kp/JUp28MGZNR/mcJMgbfcyR15d/kHapnaHAY5DWTd5x2ib6iS8SZVxjGX3e3yjouqkv2kke7z+tl5ZDuNnAzhP1QyHcQiIzxukv3Cg8vMZOnuV0l86RNmebRH7XJtRiBEjmNcoxoxgXqPYRMXnNdJf/TND3Ah+j2IWGfUZsg9uVU/pr/87WycEaEytv7qJX4QT9UvxmRigMcrnadkmR6h8y+iSAzRGdxGekkdnlXQQZ57xW+HCaV6J6avQa6XDONZTTNJxmvbSgRwaCpIIC721W9yh6d1LOpAjliLPeE5r6UaxGU60bok0mdRTmk3LtFPFWq2zciPaKzyl+0XS0XcToc6y5kEWoDEP6WB2hXa5z+jc8+8fYWr/Yk1nLwMRIkL9Ed4/09w/QrqjhdbDxf2rtvtX3vc/Pd3/BPwfdDF6mmaiMU7nMhxRLcRaOpBDVHu+zv3eI9oRle6GXuRNoS3NN4c6kqdrWjPpt9s/ISXJNXrzjBdwL/iI9vvC6U1Tna3SldRBVPvs8EfiGUrpuekfafNU/Rz1moTblzp7bFsJlY3mamYt+gJmBlcv/7Jx2abKJsAxocaMYp1BGl1ETNR8pugk+KKp8mule8JC1NpdO2S70GlaZ/XCbDmcvhq7z9VDLhPVDrGlaZXH291dxPgt49ipH8c+9fSkfFcsKZ50N4qH8UnUTdTaLy0TXlr7l9OZVQlel1lorHAInwB7+roZD9oAxxCV9TMob5rMVHWGrwhQVYiU973W1PSlrgpQzShS3oXaUvGg7coAVYRIeNdrj/wTb+KNfidE4a2f6Mn9GeE++HVpdCG6Z1C+RHJMsH67fBFOBJci5XnpjFgz9dqdcE1oV0z8LSYhhJ5pcOTRmUg+JXuv+RMi7z5zpZmJQLK5uB7dEqhPeYdQYBB7zlXosd/95h5C9kFkqtfWmGu3a5pr51ibNgzHwnesB0WS35YUivW3K3EWbAvG0q3kzzNexTdNmeuZnwj5pqnMJGWcpiKZ1GPLppGXK9OxXc98SOwVnuPqukktQ76FyNef2eJ69VIsQGN4AuwFI+Q5X/C08vfxpBqJk9OM5wQll0q5kil/A2PB0sogvb8WHCFH3SZWlXoslSnjA5l3LI9oEOENIqycc4Wbfyx/LPzPzWdu+qw4+Ce7f/32364+y+n1NgAAAAAAAAAAAAAAAAAAAAAAAAAAABF/AJFUOXlopSvSAAAAAElFTkSuQmCC"),
+        imagen: imagenperfil.length !== 0 ? (imagenperfil[0]?.url ? imagenperfil[0].url : imagenperfil[0].thumbUrl) : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXz8/TR0tTOz9Ly8vPT1Nbv7/DW19nf3+Hc3N7l5uft7e7Oz9Hi4+Tm5+jq6uzY2dvJw9RkAAAD2ElEQVR4nO3cf5OcIAwG4EPFX7i73//bVs56Wle9BWIS7Pv8cdPZTjubAUKIeF9fAAAAAAAAAAAAAAAAAAAAAAAAAAAAQM/2j6atjfNM3TaP3kp/JUp28MGZNR/mcJMgbfcyR15d/kHapnaHAY5DWTd5x2ib6iS8SZVxjGX3e3yjouqkv2kke7z+tl5ZDuNnAzhP1QyHcQiIzxukv3Cg8vMZOnuV0l86RNmebRH7XJtRiBEjmNcoxoxgXqPYRMXnNdJf/TND3Ah+j2IWGfUZsg9uVU/pr/87WycEaEytv7qJX4QT9UvxmRigMcrnadkmR6h8y+iSAzRGdxGekkdnlXQQZ57xW+HCaV6J6avQa6XDONZTTNJxmvbSgRwaCpIIC721W9yh6d1LOpAjliLPeE5r6UaxGU60bok0mdRTmk3LtFPFWq2zciPaKzyl+0XS0XcToc6y5kEWoDEP6WB2hXa5z+jc8+8fYWr/Yk1nLwMRIkL9Ed4/09w/QrqjhdbDxf2rtvtX3vc/Pd3/BPwfdDF6mmaiMU7nMhxRLcRaOpBDVHu+zv3eI9oRle6GXuRNoS3NN4c6kqdrWjPpt9s/ISXJNXrzjBdwL/iI9vvC6U1Tna3SldRBVPvs8EfiGUrpuekfafNU/Rz1moTblzp7bFsJlY3mamYt+gJmBlcv/7Jx2abKJsAxocaMYp1BGl1ETNR8pugk+KKp8mule8JC1NpdO2S70GlaZ/XCbDmcvhq7z9VDLhPVDrGlaZXH291dxPgt49ipH8c+9fSkfFcsKZ50N4qH8UnUTdTaLy0TXlr7l9OZVQlel1lorHAInwB7+roZD9oAxxCV9TMob5rMVHWGrwhQVYiU973W1PSlrgpQzShS3oXaUvGg7coAVYRIeNdrj/wTb+KNfidE4a2f6Mn9GeE++HVpdCG6Z1C+RHJMsH67fBFOBJci5XnpjFgz9dqdcE1oV0z8LSYhhJ5pcOTRmUg+JXuv+RMi7z5zpZmJQLK5uB7dEqhPeYdQYBB7zlXosd/95h5C9kFkqtfWmGu3a5pr51ibNgzHwnesB0WS35YUivW3K3EWbAvG0q3kzzNexTdNmeuZnwj5pqnMJGWcpiKZ1GPLppGXK9OxXc98SOwVnuPqukktQ76FyNef2eJ69VIsQGN4AuwFI+Q5X/C08vfxpBqJk9OM5wQll0q5kil/A2PB0sogvb8WHCFH3SZWlXoslSnjA5l3LI9oEOENIqycc4Wbfyx/LPzPzWdu+qw4+Ce7f/32364+y+n1NgAAAAAAAAAAAAAAAAAAAAAAAAAAABF/AJFUOXlopSvSAAAAAElFTkSuQmCC",
         sectores: sectores.toString(),
         perfiles: perfiles.toString(),
         idiomas: idiomas.toString(),
-        tipopreparacion: valores.emailtipoPreparacion,
+        tipopreparacion: valores.tipoPreparacion,
         duracion: valores.duracion,
-        hashtags: hashtags,
+        hashtags: valores.hashtag.toString(),
         canales: valores.canales.toString(),
         tarifa: valores.tarifa,
-        //fechasnulas: valores.calendario
+        fechasnulas: valores.calendario
       }
-      //console.log(dataValue)
+      console.log(valores.calendario)
       const url = urlProfesional + "/" + idusuario;
+      const urlAgenda = '/profesional-agenda'
+
       try {
         const respuesta = await AxiosConexionConfig.patch(url, JSON.stringify(dataValue));
-        console.log(respuesta.status)
-        if (respuesta.status === 204) {
+        const array = valores.agenda;
+
+        const respuestDEL = await AxiosConexionConfig.delete('/profesionals/' + idusuario + '/profesional-agenda');
+        const respuest1 = await AxiosConexionConfig.post(urlAgenda, JSON.stringify(array[0]));
+        const respuest2 = await AxiosConexionConfig.post(urlAgenda, JSON.stringify(array[1]));
+        const respuest3 = await AxiosConexionConfig.post(urlAgenda, JSON.stringify(array[2]));
+        const respuest4 = await AxiosConexionConfig.post(urlAgenda, JSON.stringify(array[3]));
+        const respuest5 = await AxiosConexionConfig.post(urlAgenda, JSON.stringify(array[4]));
+        const respuest6 = await AxiosConexionConfig.post(urlAgenda, JSON.stringify(array[5]));
+        const respuest7 = await AxiosConexionConfig.post(urlAgenda, JSON.stringify(array[6]));
+
+        if (respuesta.status === 204 && respuest1 && respuest2 && respuest3 && respuest4 && respuest5 && respuest6 && respuest7 && respuestDEL) {
           props.setUsuario(dataValue)
           history.push(linkperfilpor + "?" + idusuario)
-          //return (<Link to={linkperfilpor}/>)
         }
+        setCargando(false)
+
       } catch (e) {
+        setCargando(false)
+
         console.log(e);
       }
     }
   }
 
   const history = useHistory()
-
-
-
-  async function BuscarUsuarioPorEmail(usuarioEmail) {
-    const condisiones = JSON.stringify({ where: { correo: { like: '%' + usuarioEmail + '%' } } })
-    const url = urlUsuarios + "?filter=" + encodeURIComponent(condisiones);
-    try {
-      const respuesta = await AxiosConexionConfig.get(url);
-      if (respuesta.data.length > 0) {
-        //setidUsuario(respuesta.data[0].idusuario)
-        setExiste(true)
-
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
 
   return (
     <div>
@@ -182,7 +176,7 @@ const FormPrepador = (props) => {
       <div className={classNames(classes.main, classes.mainRaised)}>
         <StepWizard isLazyMount={true}>
           <Presentacion valores={valoresIniciales} primerosValores={(valores) => { primerosValores(valores) }} />
-          <Oferta1 valores={valoresSecundarios} segundosValores={(valores) => { segundosValores(valores) }} />
+          <Oferta1 cargando={cargando} valores={valoresSecundarios} segundosValoresSinBD={(valores) => { segundosValoresSinBD(valores) }} segundosValores={(valores) => { segundosValores(valores) }} />
         </StepWizard>
       </div>
     </div>

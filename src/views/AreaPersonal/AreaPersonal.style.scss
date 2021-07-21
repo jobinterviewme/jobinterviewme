@@ -34,16 +34,14 @@
 .contenedorGris .cardCitas{
     width: 80%;
     min-height: 80px;
-    display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
     color: #ee8572;
     font-family: 'Gill Sans Nova';
     font-size: 18px;
     text-transform: uppercase;
     border: 1px solid #ee8572;
-
+    align-content: center;
     box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
     border-radius: 4px;
     overflow: hidden;
@@ -59,6 +57,8 @@
     height:100px;
     width:100px;
     word-wrap: break-word;
+
+    
     }
 
     .ant-modal-confirm-body-wrapper {
@@ -117,4 +117,13 @@
         overflow: hidden !important;
         min-height: 100px;
         border-radius: 4px;
+    }
+
+
+    .contenedorGris h6{
+        font-size: 18px;
+        color: rgba(47, 45, 45, 0.85);
+        font-family: 'Gill Sans';
+        font-weight: 500;
+        text-transform: none;
     }

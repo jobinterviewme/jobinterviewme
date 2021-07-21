@@ -33,6 +33,7 @@ import { Tooltip } from "antd";
 
 const useStyles = makeStyles(styles);
 
+
 const AreaPersonal=(props)=> {
   const classes = useStyles();
   const { ...rest } = props;
@@ -87,6 +88,7 @@ const AreaPersonal=(props)=> {
    
     try {
       const citasProfesional = await AxiosConexionConfig.get(citasProfesionalURL + encodeURIComponent(JSON.stringify(otro)));
+      console.log(citasProfesional.data)
       setCitasPendiente(citasProfesional.data);
 
       if(props.global.usuario){

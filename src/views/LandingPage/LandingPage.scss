@@ -30,3 +30,22 @@ body .buttonN {
 #landingImg::before{
   height: 100% !important;
 }
+.divLanding{
+  padding: 20px;
+
+}
+
+.botonGris{
+  width: 20%;
+  height: 60px;
+  border-radius: 0.8em;
+  -webkit-border-radius: 0.8em;
+  -moz-border-radius: 0.8em;
+
+  text-transform: uppercase;
+  font-size: 22px;
+  color:#555555;
+  background: linear-gradient(180deg, #e2e2e2 50%, #b0b0b0 60%);
+  
+  transition: all .1s;
+}

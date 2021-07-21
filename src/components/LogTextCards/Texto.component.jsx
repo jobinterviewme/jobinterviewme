@@ -32,19 +32,17 @@ return (
               <div id="margen"></div>
 
               <h4 >Prepara a tu manera</h4>
-              <div id="margen"></div>
 
-              <ul><ArrowForwardIcon className="arrow" />Tú defines el precio</ul>
+              <li className="listaFormPreparador">Tú defines el precio</li>
 
-              <ul><ArrowForwardIcon className="arrow" />Cuando quieres trabajar</ul>
+              <li className="listaFormPreparador">Cuándo quieres trabajar</li>
 
-              <ul><ArrowForwardIcon className="arrow" />El formato de tu preparación</ul>
+              <li className="listaFormPreparador">El formato de tu preparación</li>
 
-              <ul><ArrowForwardIcon className="arrow" />Cuéntanos un poco de tu experiencia</ul>
+              <li className="listaFormPreparador">Cuéntanos un poco de tu experiencia</li>
 
-              <ul><ArrowForwardIcon className="arrow" />En 3 minutos tu perfil estará listo</ul>
+              <li className="listaFormPreparador">En 3 minutos tu perfil estará listo</li>
 
-              <div id="margen"></div>
               </>
 )}
 export default Texto;

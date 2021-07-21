@@ -13,10 +13,15 @@ import './Footer.styles.scss';
 import Favorite from "@material-ui/icons/Favorite";
 
 import styles from "assets/jss/material-kit-react/components/footerStyle.js";
+import { useHistory } from "react-router";
+
 
 const useStyles = makeStyles(styles);
 
 export default function Footer(props) {
+
+  const history = useHistory();
+
   const classes = useStyles();
   const { whiteFont } = props;
   const footerClasses = classNames({
@@ -48,9 +53,9 @@ export default function Footer(props) {
             </ListItem>
             <ListItem className={classes.inlineBlock}>
               <a
-                href="https://www.creative-tim.com/presentation?ref=mkr-footer"
+                href='/buzon'
                 className={classes.block}
-                target="_blank"
+                target="_self"
               >
                 Buzón de sugerencias
               </a>
@@ -92,7 +97,7 @@ export default function Footer(props) {
         </div>
 
       </div>
-    </footer>
+    </footer >
   );
 }
 

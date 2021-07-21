@@ -28,11 +28,12 @@ const LogUpPopUp = (props) => {
           closable={false}
          >
 
-          <LogUpCard link= {props.link} animation="" />
+          <LogUpCard link= {props.link} page="cliente" handleCancel={()=>props.handleCancel()} animation="" />
         </Modal>
       </>
     );
   }
+  
 
 
 export default LogUpPopUp;

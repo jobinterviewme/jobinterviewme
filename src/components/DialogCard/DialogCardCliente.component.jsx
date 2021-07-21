@@ -15,41 +15,19 @@ const DialogCardCliente = (props) => {
   }, [props.cita]);
 
 
-  function ConfirmarCita() {
+  
 
-    const UrlModificarCita = "/citas/"+ cita.idcita
-
-    setCita(props.cita);
-    
-    const jsonActivada={
-      confirmada:"true"
-    }    
-
-    confirm({
-      title: 'Confirmar Cita',
-      icon: <ExclamationCircleOutlined />,
-      content: 'Está seguro que desea confirmar esta cita?',
-       onOk() {
-        return AxiosConexionConfig.patch(UrlModificarCita,JSON.stringify(jsonActivada)).then(()=>cerrarLosDos() ).catch(() => console.log('Oops errores!'));
-      },
-      onCancel() {
-        console.log('Cancel');
-      },
-    });
-  }
-
-  function DeclinarCita() {
-
+  function EliminarCita() {
     const UrlModificarCita = "/citas/"+ cita.idcita
 
     const jsonDeclinar={
-      confirmada:"decline"
+      confirmada:"deleted"
     }    
 
     confirm({
-      title: 'Declinar Cita',
+      title: 'Eliminar Cita del historial',
       icon: <ExclamationCircleOutlined />,
-      content: 'Está seguro que desea declinar esta cita?',
+      content: 'Está seguro que desea eliminar esta cita de su historial?',
       okText: 'Sí',
       okType: 'danger',
       cancelText: 'No',
@@ -68,23 +46,38 @@ const DialogCardCliente = (props) => {
   }
   
   const botonFooter = () => {
-    if(cita!==undefined && cita.confirmada==="false"){
-    return(  [
-        <Button key="back" onClick={() => props.setModal1Visible(false)}>
-          Cancelar
-        </Button>,
-        <Button onClick={DeclinarCita} >Declinar Cita</Button>,
-        <Button onClick={ConfirmarCita}>Confirmar Cita</Button>,            
-      ])      
+      if(new Date(cita.fecha) < new Date()){
+        return([
+          <Button onClick={EliminarCita} >Eliminar Cita del historial</Button>,
+          <Button key="back" onClick={() => props.setModal1Visible(false)}>
+            Aceptar
+          </Button>          
+      ])}
+      else{
+        return( [
+          <Button key="back" onClick={() => props.setModal1Visible(false)}>
+            Aceptar
+          </Button>,                   
+        ])
+      }   
+  }
+
+    const enunciado = () => {
+      console.log(new Date(cita.fecha))
+      console.log(new Date())
+      if(cita!==undefined && cita.confirmada==="false"){
+        return <p>Tiene una solicitud de cita con {cita!==undefined?props.nombre  + " el día " + cita.fecha.split(" ")[2] + "-" + cita.fecha.split(" ")[1] + "-" + cita.fecha.split(" ")[3] :""}
+        . <br></br>La reunión deberá realizarse por {cita.canales}</p>
+      }else{
+        if(new Date(cita.fecha) < new Date()){
+          return <p>Tuvo una cita con {cita!==undefined?props.nombre  + " el día " + cita.fecha.split(" ")[2] + "-" + cita.fecha.split(" ")[1] + "-" + cita.fecha.split(" ")[3] :""}
+          . <br></br>La reunión se realizó por {cita.canales}</p>
+        }else{
+          return <p>Tiene una cita concertada con {cita!==undefined?props.nombre  + " el día " + cita.fecha.split(" ")[2] + "-" + cita.fecha.split(" ")[1] + "-" + cita.fecha.split(" ")[3] :""}
+          . <br></br>La reunión deberá realizarse por {cita.canales}</p>
+        }
+      }
     }
-    
-    else{
-     return( [
-        <Button key="back" onClick={() => props.setModal1Visible(false)}>
-          Aceptar
-        </Button>,                   
-      ])
-    }}
   
   
   return(<>
@@ -94,18 +87,12 @@ const DialogCardCliente = (props) => {
           visible={props.modal1Visible}
           onOk={() => props.setModal1Visible(false)}
           onCancel={() => props.setModal1Visible(false)}
-          centered
-          width={1000}
-          footer={ [
-            <Button key="back" onClick={() => props.setModal1Visible(false)}>
-              Aceptar
-            </Button>,                   
-          ]} >
+          
+          width={750}
+          footer={botonFooter()}>     
 
-            <p>Cita con {cita!==undefined?cita.CitaProfesional.nombreperfil  + " el día " + cita.fecha + " a las " + cita.hora:""},  </p>
-            <p>Reunión por ZOOM.</p>
-            <p>Cualquier duda en relación a esta preparación, no dudes en contactar con: jobinterviewme@gmail.com</p>   
-            
+            {enunciado()}
+            <p>Cualquier duda en relación a esta preparación, no dudes en contactar con: jobinterviewme@gmail.com</p> 
 
 
       </Modal>    

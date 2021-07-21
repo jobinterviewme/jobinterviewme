@@ -15,3 +15,17 @@
 .makeStyles-section-97 {
   padding: 0 !important;
 }
+
+
+@media only screen and (max-width: 700px) {
+
+  .dosTexto{
+    transform: translate3d(0, 100%, 0);
+  }
+
+  .dosImg{
+    transform: translate3d(0, -100%, 0);
+
+  }
+  
+  }

@@ -50,6 +50,8 @@ import FormPreparadoredit from "views/FormPreparadoredit/FormPreparadoredit";
 import { linkpreparadoredit } from "configuracion/constantes";
 import VerificarCorreo from "views/Error/VerificarCorreo";
 import Mensaje from "views/Error/Mensaje";
+import Ayuda from "views/Ayuda/Ayuda.component";
+import Buzon from "views/Buzon/Buzon.component";
 
 
 ReactDOM.render(
@@ -71,7 +73,8 @@ ReactDOM.render(
         <Route exact path={linkContratarCita} component={ContratarCita} />
         <Route exact path="/verificar" component={VerificarCorreo} />
         <Route exact path="/mensaje" component={Mensaje} />
-
+        <Route exact path="/ayuda" component={Ayuda} />
+        <Route exact path="/buzon" component={Buzon} />
 
 
       </Switch>

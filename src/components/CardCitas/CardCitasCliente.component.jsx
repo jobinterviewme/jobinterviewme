@@ -49,7 +49,7 @@ if(confirmada === "true"   ){
             </span>:<></>}
             </Button>
 
-            <DialogCardCliente cita={cita} setReload={(value)=>props.setReload(value)} modal1Visible={Modal1Visible} setModal1Visible={(value)=>setModal1Visible(value)}/>
+            <DialogCardCliente cita={cita} setReload={(value)=>props.setReload(value)} nombre={nombre} modal1Visible={Modal1Visible} setModal1Visible={(value)=>setModal1Visible(value)}/>
         </>
     );
 }

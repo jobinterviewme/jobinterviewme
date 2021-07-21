@@ -38,11 +38,9 @@ const useStyles = makeStyles(styles);
 
 const ProfilePage = (props) => {
 
-  console.log(props);
   const [date15, setDate15] = useState(null);
 
   const id = props.location.search.split("?")[1]
-
 
   addLocale('es', {
     firstDayOfWeek: 1,
@@ -97,7 +95,7 @@ const ProfilePage = (props) => {
   const invalidDays = () => {
     const invday = [];
     agenda.map((agd, idex) => {
-      if (agd.horainicio == null) {
+      if (agd.horainicio === "null") {
         switch (agd.diasemana) {
           case "Lunes": invday.push(1);
             break;
@@ -112,7 +110,6 @@ const ProfilePage = (props) => {
           case "Sábado": invday.push(6);
             break;
           case "Domingo": invday.push(0);
-            console.log(invday);
 
             break;
         }
@@ -135,7 +132,7 @@ const ProfilePage = (props) => {
       key: 'hInicio',
       render: hInicio => (
         <>
-          {hInicio !== null ? (
+          {hInicio !== "null" ? (
             <Tag color='green' key={hInicio}>
               {hInicio.toUpperCase()}
             </Tag>
@@ -155,7 +152,7 @@ const ProfilePage = (props) => {
       dataIndex: 'horafin',
       render: horaFin => (
         <>
-          {horaFin !== null ? (
+          {horaFin !== "null" ? (
             <Tag color='green' key={horaFin}>
               {horaFin.toUpperCase()}
             </Tag>
@@ -272,21 +269,27 @@ const ProfilePage = (props) => {
                   <p>{usuario.experiencia}</p>
                 </div>
 
-                <div className={classes.description}>
-                  <div className="hashtags">
-                    {usuario.hashtags.split(",").map((hashtag, index) => {
-                      return (
-                        sectoresA(hashtag, index, "hashtags")
-                      )
-                    })}
 
-                  </div>
-                </div>
+
+                {usuario.hashtags !== "" ?
+                  <div className={classes.description}>
+                    <div className="hashtags">
+                      {usuario.hashtags.split(",").map((hashtag, index) => {
+                        return (
+                          sectoresA(hashtag, index, "hashtags")
+                        )
+                      })}
+
+                    </div>
+                  </div> : <></>}
+
+
+
 
                 <div className="contenedor">
                   <div className="canalesSection">
                     <p>Canales:
-                    {usuario.canales !== null ?
+                    {usuario?.canales !== null ?
                         usuario.canales.split(",").map((canal, index) => {
                           return (
                             <Icono codigo={canal} tipo="canal" key={index} nombre={canal} id={index} />
@@ -299,13 +302,13 @@ const ProfilePage = (props) => {
 
             <GridContainer>
               <GridItem xs={12} sm={12} md={6}>
-                <h6>Horarios disponibles</h6>
+                <h4 className="horarioTitle">Horarios disponibles</h4>
                 <Table id="tabla" columns={columns1} dataSource={agenda} pagination={false} />
               </GridItem>
 
               <GridItem id="calendario1" xs={12} sm={12} md={6}>
 
-                <h6>Calendario de disponibilidad</h6>
+                <h4>Calendario de disponibilidad</h4>
                 <Calendar className="usuarioCliente" locale="es" value={date15} minDate={new Date()} disabledDates={props.global.usuario?.fechasnulas ? invalidDates() : null} disabledDays={invalidDays()} inline />
               </GridItem>
               <div className="margen"></div>

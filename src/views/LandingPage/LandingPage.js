@@ -32,21 +32,23 @@ const dashboardRoutes = [];
 const useStyles = makeStyles(styles);
 
 export default function LandingPage(props) {
-  const history=useHistory()
+  const history = useHistory()
   const classes = useStyles();
   const { ...rest } = props;
 
-  const goToBusqueda=()=>{
+  const goToBusqueda = () => {
     history.push(linkSearchPage)
-    
   }
+
+
+
   return (
     <div>
+
       <Header
         color="transparent"
         routes={dashboardRoutes}
         brand="Material Kit React"
-        rightLinks={<HeaderLinks />}
         fixed
         changeColorOnScroll={{
           height: 400,
@@ -69,8 +71,8 @@ export default function LandingPage(props) {
                 href=""
                 target="_self"
                 className="buttonN"
-                rel="noopener noreferrer" 
-                onClick={()=>goToBusqueda()}
+                rel="noopener noreferrer"
+                onClick={() => goToBusqueda()}
               >Buscar mi preparador
               </Button>
             </GridItem>
@@ -80,13 +82,11 @@ export default function LandingPage(props) {
         </div>
       </Parallax>
 
-      <div className={classNames(classes.main, classes.mainRaised)}>
+      <div className={"divLanding " + classNames(classes.main, classes.mainRaised)}>
+
         <div className={classes.container}>
           <ProductSection />
-          {//<TeamSection />}
 
-            //<WorkSection />
-          }
         </div>
       </div>
     </div>

@@ -28,6 +28,7 @@ import Loading from '../../components/Loading/Loading';
 import Canales from '../../assets/json/canales.json';
 import sectorJSON from '../../assets/json/sectores.json';
 import idiomasJSON from '../../assets/json/idiomas.json';
+import perfilesJSON from '../../assets/json/perfiles.json';
 
 //Constantes
 import { linkperfilpor } from 'configuracion/constantes';
@@ -65,6 +66,9 @@ const ProfesionalesPreview = (props) => {
     const [filteredIdiomas, setFilteredIdiomas] = useState(null);
     const [selectedSector, setSelectedSector] = useState(null);
     const [filteredSector, setFilteredSector] = useState(null);
+    const [selectedPerfil, setSelectedPerfil] = useState(null);
+    const [filteredPerfil, setFilteredPerfil] = useState(perfiles);
+    const [perfiles, setPerfil] = useState(null);
 
     const [cardAnimaton, setCardAnimation] = React.useState("cardHidden");
         setTimeout(function () {
@@ -85,8 +89,11 @@ const ProfesionalesPreview = (props) => {
     }
 
     useEffect(() => {
-        setSectores(sectorJSON.sectores);
-        setIdiomas(idiomasJSON.idiomas)
+        setSectores(sectorJSON.sectores.map((e)=>(e.name)));
+        setIdiomas(idiomasJSON.idiomas.map((e)=>(
+          e.nombre
+        )))
+        setPerfil(perfilesJSON.perfiles.map((e)=>(e.name)))
     }, []);
 
 
@@ -105,14 +112,17 @@ const ProfesionalesPreview = (props) => {
         where: {and:[
           {tarifa:{lte: (getTarifa===0||getTarifa==="")?1000000:getTarifa}},
           (selectedIdiomas!==null&&selectedIdiomas!=="")?
-              {idiomas:{like:'%'+selectedIdiomas.codigo+'%'}}:
-              {idiomas:{like:'%'+""+'%'}},
+              {idiomas:{ilike:'%'+selectedIdiomas+'%'}}:
+              {idiomas:{ilike:'%'+""+'%'}},
+          (selectedPerfil!==null&&selectedPerfil!=="")?
+              {perfiles:{ilike:'%'+selectedPerfil+'%'}}:
+              {perfiles:{ilike:'%'+""+'%'}},
           (selectedSector!==null&&selectedSector!=="")?
-              {sectores:{like:'%'+selectedSector.name+'%'}}:
-              {sectores:{like:'%'+""+'%'}},
+              {sectores:{ilike:'%'+selectedSector+'%'}}:
+              {sectores:{ilike:'%'+""+'%'}},
           (gethashtag!==null&&gethashtag!=="")?
-              {hashtags:{like:'%'+gethashtag+'%'}}:
-              {hashtags:{like:'%'+""+'%'}}           
+              {hashtags:{ilike:'%'+gethashtag+'%'}}:
+              {hashtags:{ilike:'%'+""+'%'}}           
         ]
                 
           }
@@ -121,14 +131,17 @@ const ProfesionalesPreview = (props) => {
         and:[
            {tarifa:{lte: (getTarifa===0||getTarifa==="")?1000000:getTarifa}} ,
            (selectedIdiomas!==null&&selectedIdiomas!=="")?
-               {idiomas:{like:'%'+selectedIdiomas.codigo+'%'}}:
-               {idiomas:{like:'%'+""+'%'}},
+               {idiomas:{ilike:'%'+selectedIdiomas+'%'}}:
+               {idiomas:{ilike:'%'+""+'%'}},
+            (selectedPerfil!==null&&selectedPerfil!=="")?
+               {perfiles:{ilike:'%'+selectedPerfil+'%'}}:
+               {perfiles:{ilike:'%'+""+'%'}},
            (selectedSector!==null&&selectedSector!=="")?
-               {sectores:{like:'%'+selectedSector.name+'%'}}:
-               {sectores:{like:'%'+""+'%'}},
+               {sectores:{ilike:'%'+selectedSector+'%'}}:
+               {sectores:{ilike:'%'+""+'%'}},
            (gethashtag!==null&&gethashtag!=="")?
-               {hashtags:{like:'%'+gethashtag+'%'}}:
-               {hashtags:{like:'%'+""+'%'}}
+               {hashtags:{ilike:'%'+gethashtag+'%'}}:
+               {hashtags:{ilike:'%'+""+'%'}}
         ]
      }); 
       return(profesional?requestOptions:requestOptions2)
@@ -165,12 +178,28 @@ const ProfesionalesPreview = (props) => {
             }
             else {
                 _filteredIdioma = idiomas.filter((idiom) => {
-                    return idiom.nombre.toLowerCase().startsWith(event.query.toLowerCase());
+                    return idiom.toLowerCase().startsWith(event.query.toLowerCase());
                 });
             }
+            
             setFilteredIdiomas(_filteredIdioma);
         }, 250);
     }
+    const searchPerfil = (event) => {
+      setTimeout(() => {
+          let _filteredPerfil;
+          if (!event.query.trim().length) {
+            _filteredPerfil = [...perfiles];
+          }
+          else {
+            _filteredPerfil = perfiles.filter((perf) => {
+                  return perf.toLowerCase().startsWith(event.query.toLowerCase());
+              });
+          }
+          
+          setFilteredPerfil(_filteredPerfil);
+      }, 250);
+  }
     const searchSector = (event) => {
       setTimeout(() => {
           let _filteredSector;
@@ -179,7 +208,7 @@ const ProfesionalesPreview = (props) => {
           }
           else {
             _filteredSector = sectores.filter((sector) => {
-                  return sector.name.toLowerCase().startsWith(event.query.toLowerCase());
+                  return sector.toLowerCase().startsWith(event.query.toLowerCase());
               });
           }
           setFilteredSector(_filteredSector);
@@ -310,7 +339,7 @@ const ProfesionalesPreview = (props) => {
                           value={selectedSector} 
                           suggestions={filteredSector} 
                           completeMethod={searchSector} 
-                          field="name" 
+                          field="" 
                           inputClassName={"inputAutocomplate MuiInputBase-input MuiInput-input makeStyles-input-88" }
                           forceSelection
                           onChange={(e) => {if(e.value!==null){setSelectedSector(e.value);setReload(!reload);}}} 
@@ -326,7 +355,7 @@ const ProfesionalesPreview = (props) => {
                                 value={getTarifa} 
                                 className="MuiInputBase-input MuiInput-input makeStyles-input-88" 
                                 onChange={(e) => {restaurar(),setTarifa(e.target.value)}} />
-                            <label htmlFor="precio">Precio</label>
+                            <label htmlFor="precio">Precio máximo</label>
                         </span>
                     </div>
                     <div className="MuiFormControl-root makeStyles-formControl-87">
@@ -335,7 +364,7 @@ const ProfesionalesPreview = (props) => {
                           value={selectedIdiomas} 
                           suggestions={filteredIdiomas} 
                           completeMethod={searchIdioma} 
-                          field="nombre" 
+                          field="" 
                           inputClassName={"inputAutocomplate MuiInputBase-input MuiInput-input makeStyles-input-88" }
                           forceSelection
                           onChange={(e) => {if(e.value!==null){setSelectedIdiomas(e.value);setReload(!reload);}}} 
@@ -349,10 +378,18 @@ const ProfesionalesPreview = (props) => {
 
                     <div className="MuiFormControl-root makeStyles-formControl-87">
                         <span className="p-float-label MuiInputBase-root MuiInput-root MuiInput-underline makeStyles-underline-80 MuiInputBase-formControl MuiInput-formControl">
-                            <InputText id="hashtag" 
-                                className="MuiInputBase-input MuiInput-input makeStyles-input-88" 
-                                 />
-                            <label htmlFor="hashtag">Tipo</label>
+                        <AutoComplete 
+                          value={selectedPerfil} 
+                          suggestions={filteredPerfil} 
+                          completeMethod={searchPerfil} 
+                          field="" 
+                          inputClassName={"inputAutocomplate MuiInputBase-input MuiInput-input makeStyles-input-88" }
+                          forceSelection
+                          onChange={(e) => {if(e.value!==null){setSelectedPerfil(e.value);console.log(filteredPerfil);setReload(!reload);}}} 
+                          onClear={()=>{setSelectedPerfil(null),setReload(!reload)}}
+                          //onSelect={(e) => {setSelectedIdiomas(e.value),setReload(!reload)}} 
+                        />
+                            <label htmlFor="perfil">Perfil</label>
                         </span>
                     </div>
 

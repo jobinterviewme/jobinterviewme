@@ -1,17 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Icon from "@material-ui/core/Icon";
-// @material-ui/icons
-import Email from "@material-ui/icons/Email";
-import People from "@material-ui/icons/People";
-// core components
-import Header from "components/Header/Header.js";
-import HeaderLinks from "components/Header/HeaderLinks.js";
-import Footer from "components/Footer/Footer.js";
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
+
 import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
@@ -22,12 +12,12 @@ import GoogleLogin from "components/GoogleLogin/GoogleLogin"
 import styles from "assets/jss/material-kit-react/views/loginPage.js";
 import './LogUpCard.styles.scss';
 import { Link, useHistory } from "react-router-dom";
-import * as authAction from "../../store/actions/authAction"
-import { connect } from "react-redux";
+
 import { Form, Input, Space, Select, TimePicker, Row, Col, Tag, InputNumber } from 'antd';
-import Texto from './Texto.component';
 import AxiosConexionConfig from "conexion/AxiosConexionConfig";
 import { Messages } from 'primereact/messages';
+import md5 from 'md5';
+import carga from 'assets/img/carga.gif'
 
 const useStyles = makeStyles(styles);
 
@@ -36,7 +26,8 @@ const LogUpCard = (props) => {
 
   const history = useHistory();
   const classes = useStyles();
-
+   
+  const [cargando, setCargando] = useState(false)
   const [requerido, setRequerido] = useState(true)
 
   const onFinish = (values) => {
@@ -45,29 +36,29 @@ const LogUpCard = (props) => {
 
   async function signUp(values) {
     const signUpURL = "/signUp";
-    const ProfesionalURL = "/profesionals?filter[where][idusuario]=";
 
     let valores = {
       nombre: values.nombre,
       apellidos: values.apellido,
       correo: values.email,
-      password: values.password,
-      link: "http://localhost:3000/verificar?"
+      password: md5(values.password),
+      link: "https://jobinterviewme.com/verificar?"+props.page+"&&"
     }
-
+    setCargando(true)
     try {
       AxiosConexionConfig.post(signUpURL, JSON.stringify(valores)).then((usser) => {
         if(usser.data){
+          props.handleCancel();
           history.push("/mensaje")
         }else{
-          console.log(usser.data)
           msgs1.current.show([
             { severity: 'error', summary: '', life: 30000, detail: 'El usuario ya existe' }
           ]);
         }
-        
+        setCargando(false)
       })
     }catch (e) {
+      setCargando(false)
       throw console(eee);
     }
   }
@@ -84,7 +75,6 @@ const LogUpCard = (props) => {
     </CardHeader>
 
     <Messages ref={msgs1} />
-
     <div className={classes.socialLine}>
       <GoogleLogin link={props.link} texto="Inscripción con Google" />
     </div>
@@ -172,10 +162,13 @@ const LogUpCard = (props) => {
     </CardBody>
 
     <CardFooter className={classes.cardFooter}>
-
-      <Button simple type="submit" color="primary" size="lg">
+        {cargando?
+            <img className="carga" src={carga}/>
+        :
+        <Button simple type="submit" color="primary" size="lg">
         Inscríbete
       </Button>
+      }
     </CardFooter>
   </Form>
 

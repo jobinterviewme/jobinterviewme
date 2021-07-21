@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useState,  useRef  } from "react";
 
-
 //componentes
 import Header from "components/Header/Header.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -11,11 +10,6 @@ import Icono from '../../components/Icono/Icono.component';
 import Cargando from 'components/Cargando/Cargando.component'
 import Button from "components/CustomButtons/Button.js";
 
-
-
-//JSON
-import canales from '../../assets/json/canales.json'
-
 //ANTD
 import { TimePicker, Form, Tag, Tooltip } from 'antd';
 
@@ -24,7 +18,6 @@ import { addLocale } from 'primereact/api';
 import { Calendar } from "primereact/calendar";
 import { RadioButton } from 'primereact/radiobutton';
 import { Toast } from 'primereact/toast';
-
 
 //style
 import styles from "assets/jss/material-kit-react/views/profilePage.js";
@@ -43,6 +36,7 @@ import Modal from "antd/lib/modal/Modal";
 import { useHistory } from "react-router";
 import { urlCitas } from "configuracion/constantes";
 import moment from "moment";
+import { urlUsuarios } from "configuracion/constantes";
 
 
 const useStyles = makeStyles(styles);
@@ -51,13 +45,10 @@ const useStyles = makeStyles(styles);
 const ProfilePageCliente = (props) => {
 
     const classes = useStyles();
-    const [date15, setDate15] = useState(null);
-    const [city, setCity] = useState(null);
     const history = useHistory();
 
     const [visible, setVisible] = React.useState(false);
     const [confirmLoading, setConfirmLoading] = React.useState(false);
-    //const [modalText, setModalText] = React.useState('');
 
     const [agenda, setAgenda] = useState([]);
     const [array, setArray] = useState([]);
@@ -77,66 +68,9 @@ const ProfilePageCliente = (props) => {
     const toast = useRef(null);
 
     const activedate = (value) => {
-      console.log(fecha)
-      setHora(moment('13:30', 'HH:mm'))
-      document.getElementById("time_related_controls_time-picker").setAttribute("value","13:30")
+    
       setFecha(value);
-      setTimetrue(false); 
-      switch (value.toString().split(" ")[0]){
-        case "Mon": 
-            setHorainicio(parseInt(agenda[0].horainicio.split(":")[0]));
-            setHfin(parseInt(agenda[0].horafin.split(":")[0]));
-            setMinutoInicio(parseInt(agenda[0].horainicio.split(":")[1]));
-            setMinutoFin(parseInt(agenda[0].horafin.split(":")[1]));
-            break;
-
-        case "Tue": 
-
-        setHorainicio(parseInt(agenda[1].horainicio.split(":")[0]));
-        setHfin(parseInt(agenda[1].horafin.split(":")[0]));
-            setMinutoInicio(parseInt(agenda[1].horainicio.split(":")[1]));
-            setMinutoFin(parseInt(agenda[1].horafin.split(":")[1]));
-            break;
-       
-        case "Wed": 
-        setHorainicio(parseInt(agenda[2].horainicio.split(":")[0]));
-        setHfin(parseInt(agenda[2].horafin.split(":")[0]));
-            setMinutoInicio(parseInt(agenda[2].horainicio.split(":")[1]));
-            setMinutoFin(parseInt(agenda[2].horafin.split(":")[1]));
-            break;
-        
-        case "Thu": 
-        setHorainicio(parseInt(agenda[3].horainicio.split(":")[0]));
-        setHfin(parseInt(agenda[3].horafin.split(":")[0]));
-            setMinutoInicio(parseInt(agenda[3].horainicio.split(":")[1]));
-            setMinutoFin(parseInt(agenda[3].horafin.split(":")[1]));
-            break;
-        
-        case "Fra": 
-        setHorainicio(parseInt(agenda[4].horainicio.split(":")[0]));
-        setHfin(parseInt(agenda[4].horafin.split(":")[0]));
-            setMinutoInicio(parseInt(agenda[4].horainicio.split(":")[1]));
-            setMinutoFin(parseInt(agenda[4].horafin.split(":")[1]));
-            break;
-          
-        case "Sat": 
-        setHorainicio(parseInt(agenda[5].horainicio.split(":")[0]));
-        setHfin(parseInt(agenda[5].horafin.split(":")[0]));
-            setMinutoInicio(parseInt(agenda[5].horainicio.split(":")[1]));
-            setMinutoFin(parseInt(agenda[5].horafin.split(":")[1]));
-            break;
-        
-        case "Sun":
-          setHorainicio(parseInt(agenda[6].horainicio.split(":")[0]));
-          setHfin(parseInt(agenda[6].horafin.split(":")[0]));
-            setMinutoInicio(parseInt(agenda[6].horainicio.split(":")[1]));
-            setMinutoFin(parseInt(agenda[6].horafin.split(":")[1]));
-            break;
-          
-          default: 
-          setHorainicio(null);
-            break;        
-      }     
+     
     }
 
     const id = history.location.search.split("?")[1];
@@ -144,6 +78,8 @@ const ProfilePageCliente = (props) => {
     useEffect(() => {
       DatosProfesional()
     }, []);
+
+  
 
     async function DatosProfesional() {    
       const citasProfesionalURL = "/profesionals?filter="
@@ -169,7 +105,6 @@ const ProfilePageCliente = (props) => {
       }
     }
 
-
     const invalidDates = () => {      
       const array2 = []
       array.map((a) => {
@@ -179,17 +114,32 @@ const ProfilePageCliente = (props) => {
     }
   
     const invalidDays = () => {
+      console.log(agenda)
       const invday = [];
       agenda.map((agd, idex) => {
-        if (agd.horainicio == null) {
+        if (agd.horainicio === "null"||agd.horafin === "null") {
+          console.log(agd.diasemana)
           switch (agd.diasemana) {
             case "Lunes": invday.push(1);
+            break;
             case "Martes": invday.push(2);
+            break;
+
             case "Miércoles": invday.push(3);
+            break;
+
             case "Jueves": invday.push(4);
+            break;
+
             case "Viernes": invday.push(5);
+            break;
+
             case "Sábado": invday.push(6);
+            break;
+
             case "Domingo": invday.push(0);
+            break;
+default: break;
           }
         }
       })
@@ -198,7 +148,6 @@ const ProfilePageCliente = (props) => {
   
     const fechaNum = () => {
       const mes = fecha.toString().split(" ")[1];
-      console.log(mes);
       const fechaArray = [];
       fechaArray.push(fecha.toString().split(" ")[2])
       switch (mes) {
@@ -233,21 +182,19 @@ default: fechaArray.push("");;
     }
       
     const handleOk = () => {
-      //setModalText('The modal will be closed after two seconds');
+      
       setConfirmLoading(true);
 
       let dataValue = {
         idusuario: props.global.idusuario,
-        idprofesional: 38,
+        idprofesional: parseInt(id),
         fecha: fecha.toString(),
         confirmada: 'false',
-        canales: canalSelected          
+        canales: canalSelected
       }
 
       crearCita(dataValue).then(setTimeout(() => {      
         
-        //console.log(dataValue)
-
         setVisible(false);
         setConfirmLoading(false);
         history.push('/area-cliente')
@@ -256,37 +203,45 @@ default: fechaArray.push("");;
     };
 
     async function crearCita(dataValue) {      
-        
         const url = urlCitas;
-        try {
+        const sendMailCitaContratada = "/sendMailCitaContratada";
+        const usuario = urlUsuarios +"/"+id;
 
-          const respuesta = await AxiosConexionConfig.post(url, JSON.stringify(dataValue));
-          if (respuesta.status === 200) {
-            //props.setUsuario(dataValue)
-            history.push(linkperfilpor + "?" + idusuario)
+        try{        
+          const respPreparador = await AxiosConexionConfig.get(usuario);
+              
 
-
+            const respuesta = await AxiosConexionConfig.post(url, JSON.stringify(dataValue));
             
+            if (respuesta.status === 200) {
+              let valores = {
+                correoCliente: props.global.email,
+                correoPreparador: respPreparador.data.correo,
+                clienteNombre: props.global.nombre,
+                preparadorNombre: respPreparador.data.nombre,
+                fecha: fechaNum()[0]+" - "+fechaNum()[1]+" - "+fechaNum()[2]
+              }     
+              console.log(valores.fecha)
+              AxiosConexionConfig.post(sendMailCitaContratada, JSON.stringify(valores)).then((e) => {
+                console.log(e)
+                if(e.data){
+                  return(true)
+                }else{
+                  return(false)
+                }                
+              })
+            }
+             
+      }catch (e) {
+        return false    
+      }  
+  }
 
-            //return (<Link to={linkperfilpor}/>)
-          }
-        } catch (e) {
-          console.log(e);
-        }
-      
-    }
+    
 
     const onFinish = (fieldsValue) => {
-      // Should format date value before submit.
-     
-      
-      
-      //console.log(hora, fecha, canalSelected);
 
-      if(fieldsValue['time-picker'] === undefined){
-        toast.current.show({severity: 'error', summary: 'Error', detail: 'Seleccione la hora de su cita'});
-      }else{
-        setHora(fieldsValue['time-picker']?.format('HH:mm'))
+     
         if(fecha === null){
           toast.current.show({severity: 'error', summary: 'Error', detail: 'Seleccione la fecha de su cita'});
         }else{
@@ -296,12 +251,11 @@ default: fechaArray.push("");;
             setVisible(true);
           }
         }
-      }
-        
+      } 
       
-    };
+    
 
-    const format = 'HH:mm';
+    //const format = 'HH:mm';
   
     const handleCancel = () => {
       console.log('Clicked cancel button');
@@ -319,47 +273,7 @@ default: fechaArray.push("");;
         clear: 'Claro'
       });
 
-      const horasnot = () =>{
-        console.log(hinicio,minutoInicio,hfin,minutoFin);
-        const array = [];
-        let hfin1 = hfin
-        //restarle cantidad de minutos que dura preparacion a la hr fin        
-        if(minutoFin === 0){
-          hfin1 -= 1;
-        }
-        let i = 0;
-        while( i < 24 ){
-          if( i < hinicio || i > hfin1 ){
-            array.push(i)
-          }
-          i += 1;
-        }
-        return array;
-      }
-
-      const minutsnot = (hora) => {        
-        let array = []
-        if(hora === hinicio){
-          let i = 0;
-          while( i < 60 ){
-            if( i < minutoInicio ){
-              array.push(i)
-            }
-            i += 5;
-          }
-      }
-
-      if(hora === hfin){
-      let i = 0;
-        while( i < 60 ){
-          if( i > minutoFin ){
-            array.push(i)
-          }
-          i += 5;
-        }
-      }
-        return array;
-      }
+     
 
       const header = () => {
         return (
@@ -378,7 +292,7 @@ default: fechaArray.push("");;
 
      const parallax = () => {
         return (
-          <Parallax id="sombra" small filter color="headerGreen" >
+          <Parallax id="sombra" small filter color="orange" >
     
             <div className={classes.container + " headerNameTitle"}>
               <GridContainer justify="flex-end">
@@ -400,13 +314,13 @@ default: fechaArray.push("");;
         return (
           <div className={classNames(classes.main, classes.mainRaised)}>
             <div>
-              <div className={classes.container}>
+              <div className={classes.container+" divcontratarCita"}>
 
                 <Form name="time_related_controls" onFinish={onFinish}>                
     
               <div className="p-grid p-justify-center">
                   
-              <div id="calendario1" className="p-col-12 p-md-12 p-lg-6">
+              <div id="calendario1" className="p-col-18 p-md-12 p-lg-6">
                   
                     <div className="margen"></div>
                     {
@@ -414,27 +328,9 @@ default: fechaArray.push("");;
                     }
                     <span>Seleccione el día de su cita</span>
                     <div className="margen"></div>
-
+                    {console.log(invalidDays())}
                     <Calendar className="usuarioCliente" locale="es" value={fecha} minDate={new Date()} onChange={(e) => activedate(e.value)} disabledDates={invalidDates()} disabledDays={invalidDays()} inline />
                     
-                  </div>
-
-                  <div className="p-col-7 p-md-5 p-lg-3">
-                    <div className="margen"></div>
-                    <span>Seleccione la hora de su cita</span>
-                    <div className="margen"></div>
-                    <Form.Item name="time-picker"  >
-                    <TimePicker 
-                      hideDisabledOptions={true} 
-                      showNow={false} 
-                      disabled={timetrue} 
-                      defaultValue={""} 
-                      disabledMinutes={(a)=>minutsnot(a)} 
-                      onchange={(e) => setHora(e.value)} 
-                      minuteStep={5} 
-                      disabledHours={()=>horasnot()} 
-                      format={format} />
-                  </Form.Item>
                   </div>
 
                   <div className="p-col-7 p-md-5 p-lg-3">
@@ -463,10 +359,8 @@ default: fechaArray.push("");;
 
                     </div>
                     </div>
-
                     
-                    <Toast className="toast1" ref={toast}></Toast>
-                    
+                    <Toast className="toast1" ref={toast}></Toast>                    
 
                     <div className="margen"></div>
                 </div>
@@ -474,6 +368,7 @@ default: fechaArray.push("");;
 
               </div>
             </div>
+
 
             <Modal
               title="Confirmación de cita"
@@ -483,7 +378,7 @@ default: fechaArray.push("");;
               onCancel={handleCancel}
             >
               {console.log(fecha!==null?fechaNum():"")}
-              <p>¿Está seguro que desea concertar una cita con {profesional1!==null?profesional1[0]?.nombreperfil:""}, mediante {canalSelected}, el día {fecha!==null?fechaNum()[0]:""} de {fecha!==null?fechaNum()[1]:""} de {fecha!==null?fechaNum()[2]:""} a las {hora}?</p>
+              <p>¿Está seguro que desea concertar una cita con {profesional1!==null?profesional1[0]?.nombreperfil:""}, mediante {canalSelected}, el día {fecha!==null?fechaNum()[0]:""} de {fecha!==null?fechaNum()[1]:""} de {fecha!==null?fechaNum()[2]:""}?</p>
             </Modal>
 
           </div>

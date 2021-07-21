@@ -4,6 +4,7 @@ import { CalendarTwoTone } from "@ant-design/icons";
 import { Calendar } from "react-multi-date-picker"
 import DatePanel from "react-multi-date-picker/plugins/date_panel" 
 import './Calendario.style.scss'
+import "react-multi-date-picker/styles/colors/red.css"
 
 
 class Calendario extends React.Component {
@@ -50,6 +51,8 @@ class Calendario extends React.Component {
           <Calendar value={this.props.calendario}
             onChange={(a) => this.setCalendar(a)}
             multiple
+            className="red"
+            weekStartDayIndex="2"
             format="DD/MM/YYYY"
             minDate={new Date()}
             months={["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]}

@@ -1,5 +1,5 @@
 import { Modal, Form, Input, Space, Select, TimePicker, Row, Col, Tag, InputNumber } from 'antd';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Login.style.scss'
 
 import Card from "components/Card/Card.js";
@@ -15,12 +15,18 @@ import AxiosConexionConfig from 'conexion/AxiosConexionConfig';
 import { connect } from 'react-redux';
 import * as authAction from "../../../store/actions/authAction"
 import { useHistory } from 'react-router';
+import { Messages } from 'primereact/messages';
+import carga from 'assets/img/carga.gif'
+
+
 
 const useStyles = makeStyles(styles);
 
 const LoginPopUp = (props) => {
 
   const history = useHistory()
+
+  const [cargando, setCargando] = useState(false)
 
 
   const classes = useStyles();
@@ -37,10 +43,10 @@ const LoginPopUp = (props) => {
       username: user,
       password: password,
     }
+    setCargando(true)
 
     try {
       AxiosConexionConfig.post(loginURL, JSON.stringify(valores)).then((usser) => {
-        console.log(usser.data.token)
         let usuario = {
           idusuario: usser.data.data.idusuario,
           nombre: usser.data.data.nombre,
@@ -61,13 +67,27 @@ const LoginPopUp = (props) => {
           props.setUsuarioValues(usuario); 
           history.push("/area-cliente") 
         }else{
-            console.log("error");
+          if(usser.data.data === "no verificado"){
+            msgs1.current.show([
+              { severity: 'error', summary: '', life: 30000, detail: 'Acceda a su correo para validarlo' }
+            ]);
+          } else{
+            if(usser.data.data === "no autenticado"){
+              msgs1.current.show([
+                { severity: 'error', summary: '', life: 30000, detail: 'Usuario o contraseña inválidos' }
+              ]);
+            }
+          }         
         }}
+        setCargando(false)
       })
     }catch (e) {
-      console.log(e);
+      setCargando(false)
+      console.log(e)
     }
   }
+
+  const msgs1 = useRef(null);
 
     return (
       <>       
@@ -83,11 +103,13 @@ const LoginPopUp = (props) => {
               
               <CardHeader color="primary" className={classes.cardHeader}>
                 <h4 className="blanco">Iniciar Sesión</h4>
-              </CardHeader>              
+              </CardHeader>  
+
+              <Messages ref={msgs1} />
 
               <CardBody> 
                 <div className={classes.socialLine}>
-                  <GoogleLogin link={props.link} texto="Inicia sesión con Google"/>
+                  <GoogleLogin link={props.link} idusuario={props.idusuario} texto="Inicia sesión con Google"/>
                 </div>                 
                 <Form.Item
                   name="email"
@@ -114,8 +136,7 @@ const LoginPopUp = (props) => {
                       required: true,
                       message: 'Por favor inserte su contraseña',
                     },
-                  ]}
-                    
+                  ]}                    
                 >
                   <Input.Password />
                 </Form.Item> 
@@ -125,9 +146,16 @@ const LoginPopUp = (props) => {
                 <Button simple color="primary" size="lg" onClick={()=>props.handleCancel()}>
                   Cancelar
                 </Button>
+                
+                {cargando?
+                    <img className="carga" src={carga}/>
+                :
                 <Button simple type="submit" color="primary" size="lg">
                   Iniciar Sesión
-                </Button>            
+              </Button>
+      }
+                
+                          
               </CardFooter>
             </Form>
           </Card>
@@ -135,6 +163,7 @@ const LoginPopUp = (props) => {
       </>
     );
   }
+
 
   const mapStateToProps = (rootReducer) => {
     return { global: rootReducer.auth };

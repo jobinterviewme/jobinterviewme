@@ -5,18 +5,17 @@ import * as authAction from "../../store/actions/authAction"
 import { connect } from "react-redux";
 import { Button } from 'antd';
 import AxiosConexionConfig from 'conexion/AxiosConexionConfig';
-import { linkperfilpor } from 'configuracion/constantes';
 import { useHistory } from 'react-router';
 import { linkAreaPersonalProfesional } from 'configuracion/constantes'
 import { linkContratarCita } from 'configuracion/constantes';
-import { linkAreaPersonalCliente } from 'configuracion/constantes';
-
+import { linkAreaPersonalCliente, linkpreparador } from 'configuracion/constantes';
 
 const GoogleLoginComponent = (props) => {
 
-  const { link, texto } = props;
+  const { link, texto, idusuario } = props;
 
   const definirLink = (prof) => {
+
     if (link === "areaPersonal") {
       if (prof) {
         return linkAreaPersonalProfesional
@@ -25,7 +24,15 @@ const GoogleLoginComponent = (props) => {
       }
     } else {
       if (link === "contratar") {
-        return linkContratarCita + "?" + "38"
+        return linkContratarCita + "?" + idusuario
+      } else {
+        if (link == "serPreparador") {
+          if (prof) {
+            return linkAreaPersonalProfesional
+          } else {
+            return linkpreparador
+          }
+        }
       }
     }
   }
@@ -39,7 +46,8 @@ const GoogleLoginComponent = (props) => {
       nombre: response.profileObj.givenName,
       apellidos: response.profileObj.familyName,
       email: response.profileObj.email,
-      login: true
+      login: true,
+      rol: 1
     }
     Profesional(usuario);
   }
@@ -52,35 +60,59 @@ const GoogleLoginComponent = (props) => {
 
     try {
       AxiosConexionConfig.get(UsuarioURL).then((usser) => {
+
+        //si no existe el usuario en la BD
         if (usser.data.length === 0) {
           let valores = {
             nombre: usuario.nombre,
             apellidos: usuario.apellidos,
-            correo: usuario.email
+            correo: usuario.email,
+            rol: 1
           }
+          //se crea el usuario
           AxiosConexionConfig.post("/usuarios", JSON.stringify(valores));
+
+          let valoresMail = {
+            correoCliente: usuario?.email,
+            correoPreparador: "",
+            clienteNombre: usuario?.nombre,
+            preparadorNombre: "",
+            fecha: "0"
+          }
+
+          //email registro usuario
+          AxiosConexionConfig.post("/sendMailClienteRegistrado", JSON.stringify(valoresMail));
+
+          //no es profesional
+          const LinkFinal = definirLink(false);
+          history.push(LinkFinal)
+
         } else {
           AxiosConexionConfig.get(ProfesionalURL + usser.data[0].idusuario).then((prof) => {
 
             let LinkFinal = "";
-
+            //si es profesional
             if (prof.data.length > 0) {
+              //llenamos el redux
               props.setUsuario(prof.data[0]);
+
+              //sí es profesional
               LinkFinal = definirLink(true);
             } else {
+              //no es profesional
               LinkFinal = definirLink(false);
             }
-
             history.push(LinkFinal)
           })
         }
+
+
         let urlCondicion = {
           where: {
             correo: usuario.email
           }
         }
         AxiosConexionConfig.get("/usuarios?filter=" + decodeURI(JSON.stringify(urlCondicion))).then((respuesta) => {
-          //console.log(respuesta.data);
           usuario.idusuario = respuesta.data[0].idusuario;
           usuario.rol = respuesta.data[0].rol;
           props.setUsuarioValues(usuario);
@@ -96,8 +128,8 @@ const GoogleLoginComponent = (props) => {
 
   return (
     <GoogleLogin
-      clientId="549030926812-jbmfjsqpv4du9u2ns9gahsn7oi91qdo8.apps.googleusercontent.com"
-      redirectUri="http://localhost:3000"
+      clientId="100585179204-fuunmalqpjh4et30isc4odk64jmuj41v.apps.googleusercontent.com"
+      //redirectUri="https://jobinterviewme.com"
       buttonText="Login"
       render={renderProps => (
         <>
@@ -126,4 +158,3 @@ const mapStateToProps = (rootReducer) => {
 };
 
 export default connect(mapStateToProps, authAction)(GoogleLoginComponent);
-//export default GoogleLoginComponent;

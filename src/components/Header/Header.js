@@ -19,6 +19,9 @@ import "./Header.scss";
 
 import { Link } from "react-router-dom";
 import Logo from "../../assets/img/logo.png";
+import HeaderLinks from "./HeaderLinks";
+import LoginPopUp from "./Login/Login.component";
+import LogUpPopUp from "./Login/LogUp.component";
 
 const useStyles = makeStyles(styles);
 
@@ -26,6 +29,9 @@ export default function Header(props) {
   const classes = useStyles();
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [visibleUp, setVisibleUp] = React.useState(false);
+
 
   React.useEffect(() => {
     if (props.changeColorOnScroll) {
@@ -40,6 +46,7 @@ export default function Header(props) {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
   const headerColorChange = () => {
     const { color, changeColorOnScroll } = props;
     const windowsScrollTop = window.pageYOffset;
@@ -60,7 +67,8 @@ export default function Header(props) {
         .classList.remove(classes[changeColorOnScroll.color]);
     }
   };
-  const { color, rightLinks, leftLinks, brand, fixed, absolute } = props;
+  const { color, leftLinks, brand, fixed, absolute } = props;
+  const rightLinks = <HeaderLinks setVisible={() => setVisible(true)} setVisibleUp={() => setVisibleUp(true)} setMobileOpen={() => handleDrawerToggle()} />
   const appBarClasses = classNames({
     [classes.appBar]: true,
     [classes[color]]: color,
@@ -70,50 +78,56 @@ export default function Header(props) {
   const brandComponent = <Button className={classes.title + " logo"}>{brand}</Button>;
 
   return (
-    <AppBar className={appBarClasses} id="divHeader">
-      <Toolbar className={classes.container}>
-        {leftLinks !== undefined ? brandComponent : null}
-        <div className={classes.flex}>
-          {leftLinks !== undefined ? (
-            <Hidden smDown implementation="css">
-              {leftLinks}
-            </Hidden>
-          ) : (
-            <Link to='/'>
-              <img className={"image logo-container " + classes.title} src={Logo} />
-            </Link>
-          )}
-        </div>
-        <Hidden smDown implementation="css">
-          {rightLinks}
-        </Hidden>
-        <Hidden mdUp>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerToggle}
-          >
-            <Menu />
-          </IconButton>
-        </Hidden>
-      </Toolbar>
-      <Hidden mdUp implementation="js">
-        <Drawer
-          variant="temporary"
-          anchor={"right"}
-          open={mobileOpen}
-          classes={{
-            paper: classes.drawerPaper
-          }}
-          onClose={handleDrawerToggle}
-        >
-          <div className={classes.appResponsive}>
-            {leftLinks}
-            {rightLinks}
+    <>
+
+
+      <AppBar className={appBarClasses} id="divHeader">
+        <Toolbar className={classes.container}>
+          {leftLinks !== undefined ? brandComponent : null}
+          <div className={classes.flex}>
+            {leftLinks !== undefined ? (
+              <Hidden smDown implementation="css">
+                {leftLinks}
+              </Hidden>
+            ) : (
+              <Link to='/'>
+                <img className={"image logo-container " + classes.title} src={Logo} />
+              </Link>
+            )}
           </div>
-        </Drawer>
-      </Hidden>
-    </AppBar>
+          <Hidden smDown implementation="css">
+            {rightLinks}
+          </Hidden>
+          <Hidden mdUp>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerToggle}
+            >
+              <Menu />
+            </IconButton>
+          </Hidden>
+          <LoginPopUp link="areaPersonal" visible={visible} handleCancel={() => setVisible(false)} />
+          <LogUpPopUp link="areaPersonal" visibleUp={visibleUp} handleCancel={() => setVisibleUp(false)} />
+        </Toolbar>
+        <Hidden mdUp implementation="js">
+          <Drawer
+            variant="temporary"
+            anchor={"right"}
+            open={mobileOpen}
+            classes={{
+              paper: classes.drawerPaper
+            }}
+            onClose={handleDrawerToggle}
+          >
+            <div className={classes.appResponsive}>
+              {leftLinks}
+              {rightLinks}
+            </div>
+          </Drawer>
+        </Hidden>
+      </AppBar>
+    </>
   );
 }
 

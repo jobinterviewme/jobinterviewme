@@ -1,4 +1,4 @@
-export const baseURL = "http://localhost:3010";
+export const baseURL = "https://jobinterviewme-api-fvswg.ondigitalocean.app";
 
 //BBDD
 export const urlProfesional = "/profesionals";
@@ -6,7 +6,6 @@ export const urlUsuarios = "/usuarios";
 export const urlAgenda = "/agenda";
 export const urlCitas = "/citas";
 export const urlProfesionalAgenda = "/profesional-agenda"
-
 export const urlCount = "/count";
 export const linkperfilpor = "/perfilpro"
 export const linkperfilporClient = "/perfilproClient"
@@ -21,6 +20,7 @@ export const linkAreaPersonalProfesional = "/area-profesional"
 export const linkAreaPersonalCliente = "/area-cliente"
 export const linkContratarCita = "/contratar"
 export const linkpreparadoredit = "/formpreparadoredit"
+
 
 
 

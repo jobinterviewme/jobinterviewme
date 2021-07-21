@@ -16,6 +16,9 @@ import * as authAction from "../../store/actions/authAction"
 
 
 const Presentacion = (props) => {
+
+    { console.log(props.valores) }
+
     const [sectores, setSectores] = useState([]);
     const [idiomas, setIdiomas] = useState(null)
     const [nombreImagen, setNombreImagen] = useState("")
@@ -26,20 +29,29 @@ const Presentacion = (props) => {
     const [selectedIdiomas, setSelectedIdiomas] = useState(props.valores.idiomas !== "" ? props.valores.idiomas : null);
     const [filteredIdiomas, setFilteredIdiomas] = useState(null);
 
-    const [nombrePerfil, setNombrePerfil] = useState(props.global.usuario.nombreperfil)
-    const [annos, setannos] = useState(props.global.usuario.annosexperiencia)
-    const [experiencia, setexperiencia] = useState(props.global.usuario.experiencia)
-    const [imagen, setimagen] = useState(props.global.usuario.imagen)
-    const [sectores1, setsectores1] = useState(props.global.usuario.sectores.split(","))
-    const [perfiles, setperfiles] = useState(props.global.usuario.perfiles.split(","))
-    const [idiomas1, setidiomas1] = useState(props.global.usuario.idiomas.split(","))
-    const [fileList, setFileList] = useState(props.global.usuario?.imagen ? [
+
+
+    const [nombrePerfil, setNombrePerfil] = useState(props.valores.nombrePerfil === "" ? props.global.usuario.nombreperfil : props.valores.nombrePerfil)
+    const [annos, setannos] = useState(props.valores.annosExperiencia === "" ? props.global.usuario.annosexperiencia : props.valores.annosExperiencia)
+    const experiencia = props.global.usuario.experiencia
+    const [imagen, setimagen] = useState(props.valores.imagenperfil)
+    const [sectores1, setsectores1] = useState(props.valores.sectores === "" ? props.global.usuario.sectores.split(",") : props.valores.sectores)
+    const [perfiles, setperfiles] = useState(props.valores.perfiles === "" ? props.global.usuario.perfiles.split(",") : props.valores.perfiles)
+    const [idiomas1, setidiomas1] = useState(props.valores.idiomas === "" ? props.global.usuario.idiomas.split(",") : props.valores.idiomas)
+    const [fileList, setFileList] = useState(props.valores.imagenperfil === "" ? props.global.usuario?.imagen ? [
         {
             uid: '-1',
             name: 'image.png',
             status: 'done',
             url: props.global.usuario.imagen,
-        }] : []
+        }] : [] :
+        props.valores?.imagenperfil.length !== 0 ? [
+            {
+                uid: '-1',
+                name: 'image.png',
+                status: 'done',
+                url: props.valores.imagenperfil[0].thumbUrl,
+            }] : []
     );
     useEffect(() => {
         setSectores(sectorJSON.sectores);
@@ -50,6 +62,9 @@ const Presentacion = (props) => {
 
         setValoresInicioales(props.valores)
     }, [props.valores]);
+
+    { console.log(experiencia) }
+
 
     const searchSector = (event) => {
         setTimeout(() => {
@@ -66,25 +81,9 @@ const Presentacion = (props) => {
         }, 250);
     }
 
-    const searchIdioma = (event) => {
-        setTimeout(() => {
-            let _filteredIdioma;
-            if (!event.query.trim().length) {
-                _filteredIdioma = [...idiomas];
-            }
-            else {
-                _filteredIdioma = idiomas.filter((idiom) => {
-                    return idiom.nombre.toLowerCase().startsWith(event.query.toLowerCase());
-                });
-            }
-            setFilteredIdiomas(_filteredIdioma);
-        }, 250);
-    }
 
     const handleSubmit = (values) => {
-        console.log(values);
         let bandera = true
-
         if (bandera) {
 
             if (values.nombrePerfil === undefined) {
@@ -108,7 +107,7 @@ const Presentacion = (props) => {
             if (values.idiomas === undefined) {
                 values.idiomas = idiomas1
             }
-            console.log(values);
+            { console.log(values) }
             props.primerosValores(values)
             props.goToStep(2);
         } else {
@@ -161,8 +160,8 @@ const Presentacion = (props) => {
     return (
 
         <Form layout="vertical" className="register-form" name="formPresent" onFinish={handleSubmit} autoComplete="off">
-            <Row className="OfertaFrom">
-                <Col span={12} className="OfertaCol1">
+            <div className="p-grid OfertaFrom">
+                <div span={12} className="p-col-12 p-md-12 p-lg-6 OfertaCol1">
                     <Form.Item
                         label="Nombre de tu perfil"
                         name="nombrePerfil"
@@ -201,12 +200,12 @@ const Presentacion = (props) => {
                             message: 'Por favor introduzca los años de experiencia',
                         },]}
                     >
-                        <TextArea showCount rows={6} maxlength={250} maxLength={250} defaultValue={experiencia} defaultValue={experiencia} id="experiencia" name="experiencia" aria-describedby="username2-help" />
+                        <TextArea showCount rows={6} maxlength={250} maxLength={250} defaultValue={experiencia} value={experiencia} id="experiencia" name="experiencia" aria-describedby="username2-help" />
                     </Form.Item>
 
-                </Col>
+                </div>
 
-                <Col span={12} className="OfertaCol1">
+                <div span={12} className="p-col-12 p-md-12 p-lg-6 OfertaCol1">
 
                     <Form.Item
                         label="Imagen de perfil"
@@ -214,6 +213,7 @@ const Presentacion = (props) => {
                         defaultValue={imagen}
                         value={imagen}
                     >
+
                         <ImgCrop rotate>
                             <Upload
                                 fileList={fileList}
@@ -226,7 +226,7 @@ const Presentacion = (props) => {
                                 value={imagen}
 
                             >
-                                {fileList.length < 1 && '+ Adiciona tu imagen de perfil'}
+                                {fileList.length < 1 && '+ Añade tu foto de perfil'}
                             </Upload>
                         </ImgCrop>
                     </Form.Item>
@@ -235,11 +235,11 @@ const Presentacion = (props) => {
                         label="Sectores"
                         name="sectores"
                         rules={[{
-                            required: sectores1 === "" ? true : false,
+                            required: sectores === "" ? true : false,
                             message: 'Por favor introduzca los sectores',
                         },]}
                     >
-                        <Select mode="tags" value={selectedSectores} defaultValue={sectores1} style={{ width: '100%' }} placeholder="Sectores" onChange={(e) => setSelectedSectores(e.value)}>
+                        <Select mode="tags" value={sectores1} defaultValue={sectores1} style={{ width: '100%' }} placeholder="Sectores" onChange={(e) => setSelectedSectores(e.value)}>
                             {sectoresOptions}
                         </Select>
                     </Form.Item>
@@ -261,7 +261,7 @@ const Presentacion = (props) => {
                         label="Idiomas"
                         name="idiomas"
                         rules={[{
-                            required: idiomas1 === "" ? true : false,
+                            required: idiomas === "" ? true : false,
                             message: 'Por favor introduzca los idiomas',
                         },]}
                     >
@@ -270,19 +270,15 @@ const Presentacion = (props) => {
                         </Select>
                     </Form.Item>
 
-                </Col>
+                </div>
 
-            </Row>
+                <div className="botonBottom" >
+                    <Button label="Siguiente" type="submit" icon="pi pi-check" />
+                </div>
 
-            <GridContainer>
-                <GridItem xs={12} sm={12} md={2}>
-                    <div className="p-field p-col p-md-6 p-col-12" >
-                        <div className={"center"} >
-                            <Button label="Siguiente" type="submit" icon="pi pi-check" />
-                        </div>
-                    </div>
-                </GridItem>
-            </GridContainer>
+            </div>
+
+
         </Form >
 
 

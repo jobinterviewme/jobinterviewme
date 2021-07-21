@@ -13,6 +13,7 @@ import './Verificar.scss';
 import AxiosConexionConfig from "conexion/AxiosConexionConfig.js";
 import { useHistory } from "react-router";
 import Cargando from "../../components/Cargando/Cargando.component"
+import { linkpreparador } from "configuracion/constantes.js";
 
 
 const useStyles = makeStyles(styles);
@@ -24,8 +25,11 @@ const VerificarCorreo = (props) => {
     const [tokenDes, setTokenDes] = useState([]);
 
     const token = {
-        token: props.location.search.split("?")[1]
+        token: props.location.search.split("?")[1].split("&&")[1]
     }
+
+    const page = props.location.search.split("?")[1].split("&&")[0]
+
     const URL= "/verificar-token"
     const rol = {
         rol: 1
@@ -47,10 +51,13 @@ const VerificarCorreo = (props) => {
               login: true,
               token: token.token
             }    
-            console.log(usuario)
-              props.setUsuarioValues(usuario).then( 
-                history.push("/area-cliente")
-              )
+              props.setUsuarioValues(usuario).then(()=>{
+                if(page==="cliente"){
+                  history.push("/area-cliente")
+                }else{
+                  history.push(linkpreparador)
+                }
+              })
 
         }catch (e) {
           console.log(e);
@@ -62,22 +69,28 @@ const VerificarCorreo = (props) => {
         
         try {
           const respuesta1 = await AxiosConexionConfig.post(URL,JSON.stringify(token));
-           console.log(respuesta1);
            setTokenDes(respuesta1);
            if(respuesta1!==null){
-               console.log("diferente de null")
             await AxiosConexionConfig.patch(UsuarioURL+respuesta1.data._id,JSON.stringify(rol));
+            //email registro usuario
+            let valoresMail = {
+              correoCliente: respuesta1?.data?.correo,
+              correoPreparador: "",
+              clienteNombre: respuesta1?.data?.nombre,
+              preparadorNombre: "",
+              fecha: "0"
+            }
+              
+            //email registro usuario
+            const e = AxiosConexionConfig.post("/sendMailClienteRegistrado", JSON.stringify(valoresMail));
+  
             Login(respuesta1);
         }
 
         } catch (e) {
           console.log(e);
         }
-    }
-
-    const mensaje = () => {
-
-    }
+    }    
 
 return (
     <div>
@@ -97,14 +110,12 @@ return (
               <h3 className={classes.title + " nameTitle"}>Verificación del correo</h3>
             </GridItem>
 
-
           </GridContainer>
         </div>
       </Parallax>
 
       <div className={classNames(classes.main, classes.mainRaised)+ " verificadoDiv"}>
          <div className="verificado"><Cargando/></div>
-
       </div>
     </div>
   );

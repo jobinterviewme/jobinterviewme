@@ -43,8 +43,9 @@ const ProfilePageCliente = (props) => {
 
   const history = useHistory()
 
-
   const [date15, setDate15] = useState(null);
+  const [cargandoTabla, setCargando] = useState(false)
+
 
   const id = props.location.search.split("?")[1]
 
@@ -65,7 +66,7 @@ const ProfilePageCliente = (props) => {
   const { ...rest } = props;
   const [usuario, setUsuario] = useState("")
   const [usserName, setUsseName] = useState(props.global)
-  const [agenda, setAgenda] = useState(null);
+  const [agenda, setAgenda] = useState([]);
   const [invday, setinvday] = useState([]);
   const [invdate, setinvdate] = useState([]);
 
@@ -84,20 +85,17 @@ const ProfilePageCliente = (props) => {
   async function RefreshUsuario() {
     const url1 = urlProfesional + "/" + id;
     const url2 = urlProfesional + "/" + id + "/profesional-agenda";
+    setCargando(true)
     try {
       const respuesta1 = await AxiosConexionConfig.get(url1);
-
       const respuesta2 = await AxiosConexionConfig.get(url2);
       setAgenda(respuesta2.data);
-
-      //console.log(respuesta1.data)
       setUsuario(respuesta1.data);
-      //console.log(respuesta2.data)
       invalidDates(respuesta1.data);
       invalidDays(respuesta2.data);
-      //setUsseName(props.global)
-      //console.log(props.global)
+      setCargando(false)
     } catch (e) {
+      setCargando(false)
       console.log(e);
     }
   }
@@ -113,29 +111,32 @@ const ProfilePageCliente = (props) => {
     setinvdate(array2);
   }
 
-  const invalidDays = (agenda1) => {
-    let invday1 = [];
-    agenda1.map((agd, idex) => {
-      if (agd.horainicio === null) {
+  const invalidDays = () => {
+    const invday = [];
+    agenda.map((agd, idex) => {
+      if (agd.horainicio === "null") {
         switch (agd.diasemana) {
-          case "Lunes": invday1.push(1);
+          case "Lunes": invday.push(1);
             break;
-          case "Martes": invday1.push(2);
+          case "Martes": invday.push(2);
             break;
-          case "Miércoles": invday1.push(3);
+          case "Miércoles": invday.push(3);
             break;
-          case "Jueves": invday1.push(4);
+          case "Jueves": invday.push(4);
             break;
-          case "Viernes": invday1.push(5);
+          case "Viernes": invday.push(5);
             break;
-          case "Sábado": invday1.push(6);
+          case "Sábado": invday.push(6);
             break;
-          case "Domingo": invday1.push(0);
+          case "Domingo": invday.push(0);
+            console.log(invday);
+
             break;
         }
       }
     })
-    setinvday(invday1);
+
+    return invday;
   }
 
   const [visible, setVisible] = useState(false);
@@ -161,7 +162,7 @@ const ProfilePageCliente = (props) => {
       key: 'hInicio',
       render: hInicio => (
         <>
-          {hInicio !== null ? (
+          {hInicio !== "null" ? (
             <Tag color='green' key={hInicio}>
               {hInicio.toUpperCase()}
             </Tag>
@@ -181,7 +182,7 @@ const ProfilePageCliente = (props) => {
       dataIndex: 'horafin',
       render: horaFin => (
         <>
-          {horaFin !== null ? (
+          {horaFin !== "null" ? (
             <Tag color='green' key={horaFin}>
               {horaFin.toUpperCase()}
             </Tag>
@@ -259,7 +260,7 @@ const ProfilePageCliente = (props) => {
                   <div className={classes.name}>
 
                     <div id="banderasList">
-                      {usuario.idioma == !null ?
+                      {usuario?.idiomas !== undefined ?
                         usuario?.idiomas.split(",").map((idioma, index) => {
                           return (
                             <Icono codigo={idioma} tipo="bandera" key={index} nombre={idioma} id={index} />
@@ -269,7 +270,7 @@ const ProfilePageCliente = (props) => {
                     </div>
 
                     <div className="precio">
-                      <span className="precioText">{usuario?.tarifa + "€ / " + usuario?.duracion + '’ entrevista'}</span>
+                      <span className="precioText">{(usuario ? usuario.tarifa + " € / " : "") + (usuario ? usuario.duracion : "")}</span>
                     </div>
 
                     <Button className="contratar precio" simple color="primary" onClick={() => goToContratar(id)} size="lg">
@@ -285,7 +286,7 @@ const ProfilePageCliente = (props) => {
                 <div className="experiencia">
                   <p> {usuario?.annosexperiencia} años de experiencia en el(los) sector(es):
                     <div className="sectores">
-                      {usuario.sectores == !null ?
+                      {usuario.sectores !== undefined ?
                         usuario?.sectores.split(",").map((sector, index) => {
                           return (
                             sectoresA(sector, index, "sectores")
@@ -300,16 +301,17 @@ const ProfilePageCliente = (props) => {
                   <p>{usuario?.experiencia}</p>
                 </div>
 
-                <div className={classes.description}>
-                  <div className="hashtags">
-                    {usuario.hashtags == !null ?
-                      usuario?.hashtags.split(",").map((hashtag, index) => {
-                        return (
-                          sectoresA(hashtag, index, "hashtags")
-                        )
-                      }) : <></>}
-                  </div>
-                </div>
+                {usuario.hashtags !== "" ?
+                  <div className={classes.description}>
+                    <div className="hashtags">
+                      {usuario.hashtags !== undefined ?
+                        usuario?.hashtags.split(",").map((hashtag, index) => {
+                          return (
+                            sectoresA(hashtag, index, "hashtags")
+                          )
+                        }) : <></>}
+                    </div>
+                  </div> : <></>}
 
                 <div className="contenedor">
                   <div className="canalesSection">
@@ -327,26 +329,24 @@ const ProfilePageCliente = (props) => {
 
             <GridContainer>
               <GridItem xs={12} sm={12} md={6}>
-                <h6>Horarios disponibles</h6>
+                <h4>Horarios disponibles</h4>
 
-                {agenda !== null ? console.log(agenda) : console.log("no agenda")}
-                {
-                  agenda !== null ?
-                    <Table id="tabla" columns={columns1} dataSource={agenda} pagination={false} /> : <></>}
+                <Table id="tabla" columns={columns1} dataSource={agenda} pagination={false} /> : <></>
+
               </GridItem>
 
               <GridItem id="calendario1" xs={12} sm={12} md={6}>
 
-                <h6>Calendario de disponibilidad</h6>
+                <h4>Calendario de disponibilidad</h4>
+                <Calendar className="usuarioCliente" locale="es" value={date15} minDate={new Date()} disabledDates={invdate} disabledDays={invalidDays()} inline />
 
-                <Calendar className="usuarioCliente" locale="es" minDate={new Date()} disabledDates={invdate} disabledDays={invday} inline />
               </GridItem>
               <div className="margen"></div>
             </GridContainer>
           </div>
         </div>
 
-        <LoginPopUp link="contratar" visible={visible} handleCancel={() => setVisible(false)} />
+        <LoginPopUp link="contratar" idusuario={id} visible={visible} handleCancel={() => setVisible(false)} />
 
       </div>
     )
@@ -357,7 +357,7 @@ const ProfilePageCliente = (props) => {
       {header()}
       {parallax()}
 
-      {props.global !== null ? body() :
+      {!cargandoTabla ? body() :
 
         <Fragment>
           <div className={classNames(classes.main, classes.mainRaised)}>

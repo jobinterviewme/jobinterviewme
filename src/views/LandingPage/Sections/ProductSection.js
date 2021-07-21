@@ -27,11 +27,9 @@ export default function ProductSection() {
         <GridItem xs={12} sm={12} md={8}>
           <h2 id="uno" className={classes.title}>Quiénes somos</h2>
           <h5 className={classes.description}>
-            This is the paragraph where you can write more details about your
-            product. Keep you user engaged by providing meaningful information.
-            Remember that by this time, the user is curious, otherwise he wouldn
-            {"'"}t scroll to get here. Add a button if you want the user to see
-            more.
+            Somos una Startup nacida para ayudarte a preparar entrevistas de trabajo.
+            Nuestro objetivo es que exprimas todo tu potencial y que seas capaz de mostrarlo en un proceso de selección.
+            Para ello queremos ofrecerte un amplio catálogo de profesionales con talento y ganas de ofrecerte una preparación.
           </h5>
         </GridItem>
       </GridContainer>
@@ -47,20 +45,20 @@ export default function ProductSection() {
             <GridItem xs={12} sm={12} md={8}>
               <h2 className={classes.title}>Escoge el preparador ideal</h2>
               <h5 className={classes.description}>
-                Consulta libremente los perfiles y contacta un-a fantástico-a profesional en recursos humanos
+                Consulta libremente los perfiles y contacta con un fantástico profesional en recursos humanos
                 que te puede guiar en tu próxima entrevista.
               Elígelo según tus criterios (tarifas, títulos, opiniones,…)</h5>
             </GridItem>
           </GridContainer>
 
           <GridContainer>
-            <GridItem xs={12} sm={12} md={8}>
+            <GridItem className="dosTexto" xs={12} sm={12} md={8}>
               <h2 id="dos" className={classes.title}>Haz un hueco en tu agenda</h2>
               <h5 className={classes.description}>
                 Selecciona una fecha disponible para tu cita con el preparador y reserva-la</h5>
             </GridItem>
 
-            <GridItem xs={12} sm={12} md={4}>
+            <GridItem className="dosImg" xs={12} sm={12} md={4}>
               <img src={dos} />
             </GridItem>
           </GridContainer>
